@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+:root {
+  --page-pad-block: 1rem;
+  --page-pad-inline: 1.25rem;
+}
+
+body {
+  background-color: #f9f9f9;
+  /* Bitter Creek font stack */
+  --font: "Unica 77 Monollsub", Inter, Arial, sans-serif;
+  z-index: 50;
+  margin: 0;
+}
+
+main {
+  padding: var(--page-pad-block) var(--page-pad-inline);
+}

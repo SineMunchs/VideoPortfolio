@@ -1,0 +1,210 @@
+---
+import items from "../data/work.json";
+
+type WorkItem = {
+  id: string;
+  href: string;
+  poster: string;
+  videoSrc: string;
+  tag?: string;
+  loc: string;
+  title: string;
+  year: string;
+  code: string;
+};
+
+const workItems = items as WorkItem[];
+---
+
+<section class="workRow" aria-label="Selected work">
+  {workItems.map((item) => (
+    <article class="workItem" id={item.id}>
+      <a class="media" href={item.href} aria-label={`Open ${item.code}`}>
+        <video
+          class="vid"
+          muted
+          playsinline
+          preload="metadata"
+          poster={item.poster}
+          data-hover-play
+        >
+          <source src={item.videoSrc} type="video/mp4" />
+        </video>
+
+        <span class="watch">{item.tag ?? "watch"}</span>
+      </a>
+
+      <div class="metaGrid" aria-label="Project metadata">
+        <div class="meta">{item.loc}</div>
+        <div class="meta metaInline">
+          <span>{item.title}</span>
+          <span class="metaYear">{item.year}</span>
+        </div>
+        <div class="meta code">{item.code}</div>
+      </div>
+    </article>
+  ))}
+</section>
+
+<script is:inline>
+  (() => {
+    document.querySelectorAll("video[data-hover-play]").forEach((v) => {
+      const wrap = v.closest("a");
+      if (!wrap) return;
+
+      const play = async () => {
+        try {
+          v.currentTime = 0;
+          await v.play();
+        } catch {}
+      };
+
+      const stop = () => {
+        v.pause();
+        v.currentTime = 0;
+      };
+
+      wrap.addEventListener("mouseenter", play);
+      wrap.addEventListener("mouseleave", stop);
+      wrap.addEventListener("focusin", play);
+      wrap.addEventListener("focusout", stop);
+    });
+  })();
+</script>
+
+<style>
+  :root {
+    --font: "Unica 77 Monollsub", Inter, Arial, sans-serif;
+    --text: #111;
+    --line: #e6e6e6;
+
+    --gutter: 0px;
+    --section-mt: 1px;
+  }
+
+  .workRow {
+    font-family: var(--font);
+    color: var(--text);
+
+    margin-top: var(--section-mt);
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .workItem {
+    display: grid;
+    grid-template-rows: auto auto;
+  }
+
+  .media {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #000;
+    text-decoration: none;
+  }
+
+  .vid {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1);
+    transition: transform 200ms ease;
+  }
+
+  .media:hover .vid,
+  .media:focus-visible .vid {
+    transform: scale(1.02);
+  }
+
+  .watch {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+
+    font-size: 22px;
+    text-transform: lowercase;
+    letter-spacing: 0.01em;
+
+    color: #fff;
+    mix-blend-mode: difference;
+    pointer-events: none;
+  }
+
+  .metaGrid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr 0.8fr;
+    gap: 18px;
+    align-items: start;
+
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+
+    font-size: 14px;
+    letter-spacing: 0.01em;
+  }
+
+  .meta {
+    line-height: 1.25;
+  }
+
+  .metaInline {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .metaYear {
+    font-size: 0.9em;
+    opacity: 0.8;
+  }
+
+  .code {
+    justify-self: end;
+      align-self: start;   /* lodret: top af grid-cellen */
+    font-size: 44px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transform: translateX(-8px);
+  }
+
+  .media:focus-visible {
+    outline: 2px solid #111;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 900px) {
+    .workRow {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .workItem + .workItem {
+      border-left: 0;
+    }
+
+    .metaGrid {
+      grid-template-columns: auto auto auto;
+      gap: 12px;
+      align-items: center;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .code {
+      justify-self: start;
+      font-size: 32px;
+      transform: translateX(-6px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vid {
+      transition: none;
+    }
+  }
+</style>

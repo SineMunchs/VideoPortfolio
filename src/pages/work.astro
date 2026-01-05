@@ -1,0 +1,23 @@
+---
+import Nav from '../components/nav.astro';
+import Layout from '../layouts/Layout.astro';
+import WorkGrid from '../components/workGrid.astro';
+
+---
+
+<Layout>
+    <Nav />
+    <h1 class="pageTitle" >Work</h1>
+    
+   <WorkGrid />
+    
+</Layout>
+
+
+<style>
+    .pageTitle {
+        font-family: var(--font);
+        font-size: 3rem;
+        text-align: right;
+ 
+    }

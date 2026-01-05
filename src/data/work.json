@@ -1,0 +1,24 @@
+[
+  {
+    "id": "gp02",
+    "href": "/work/gp02",
+    "poster": "https://images.unsplash.com/photo-1520975682031-a7a2811e96a8?auto=format&fit=crop&w=1600&q=60",
+    "videoSrc": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    "tag": "watch",
+    "loc": "country, short",
+    "title": "brand",
+    "year": "2025",
+    "code": "name"
+  },
+  {
+    "id": "gq12",
+    "href": "/work/gq12",
+    "poster": "https://images.unsplash.com/photo-1520975958229-7f61d11a94b1?auto=format&fit=crop&w=1600&q=60",
+    "videoSrc": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/bee.mp4",
+    "tag": "watch",
+    "loc": "country, short",
+    "title": "brand",
+    "year": "2025",
+    "code": "name"
+  }
+]
