@@ -1,24 +1,46 @@
 [
   {
-    "id": "gp02",
+    "id": "1",
     "href": "/work/gp02",
-    "poster": "https://images.unsplash.com/photo-1520975682031-a7a2811e96a8?auto=format&fit=crop&w=1600&q=60",
-    "videoSrc": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    "poster": "/assets/run.png",
+    "videoSrc": "/assets/run.mp4",
     "tag": "watch",
     "loc": "country, short",
     "title": "brand",
     "year": "2025",
-    "code": "name"
+    "project": "name"
   },
   {
-    "id": "gq12",
+    "id": "2",
     "href": "/work/gq12",
-    "poster": "https://images.unsplash.com/photo-1520975958229-7f61d11a94b1?auto=format&fit=crop&w=1600&q=60",
-    "videoSrc": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/bee.mp4",
+    "poster": "/assets/walk.png",
+    "videoSrc": "/assets/walk.mp4",
     "tag": "watch",
     "loc": "country, short",
     "title": "brand",
     "year": "2025",
-    "code": "name"
-  }
+    "project": "name"
+  }, 
+  {
+    "id": "3",
+    "href": "/work/gr23",
+    "poster": "/assets/fly.png",
+    "videoSrc": "/assets/fly.mp4",
+    "tag": "watch",
+    "loc": "country, short",
+    "title": "brand",
+    "year": "2025",
+    "project": "name"
+  }, 
+   {
+    "id": "4",
+    "href": "/work/gq12",
+    "poster": "/assets/run.png",
+    "videoSrc": "/assets/switch.mp4",
+    "tag": "watch",
+    "loc": "country, short",
+    "title": "brand",
+    "year": "2025",
+    "project": "name"
+  }    
 ]

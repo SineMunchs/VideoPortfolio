@@ -10,7 +10,7 @@ type WorkItem = {
   loc: string;
   title: string;
   year: string;
-  code: string;
+  project: string;
 };
 
 const workItems = items as WorkItem[];
@@ -18,8 +18,21 @@ const workItems = items as WorkItem[];
 
 <section class="workRow" aria-label="Selected work">
   {workItems.map((item) => (
-    <article class="workItem" id={item.id}>
-      <a class="media" href={item.href} aria-label={`Open ${item.code}`}>
+    <article
+      class="workItem"
+      id={item.id}
+      tabindex="0"
+      data-id={item.id}
+      data-project={item.project}
+      data-title={item.title}
+      data-year={item.year}
+      data-loc={item.loc}
+      data-tag={item.tag ?? "watch"}
+      data-video={item.videoSrc}
+      data-poster={item.poster}
+      data-href={item.href}
+    >
+      <a class="media" href={item.href} aria-label={`Open ${item.project}`}>
         <video
           class="vid"
           muted
@@ -40,20 +53,159 @@ const workItems = items as WorkItem[];
           <span>{item.title}</span>
           <span class="metaYear">{item.year}</span>
         </div>
-        <div class="meta code">{item.code}</div>
+        <div class="meta project">{item.project}</div>
       </div>
     </article>
   ))}
 </section>
 
+<div class="overlay" data-overlay aria-hidden="true">
+  <div class="overlay-panel">
+    <button class="overlay-close" type="button" data-overlay-close aria-label="Close project overlay">
+      close
+    </button>
+
+    <div class="overlay-body">
+      <div class="overlay-media">
+        <video class="overlay-video" playsinline controls muted autoplay data-overlay-video>
+          <source data-overlay-source type="video/mp4" />
+        </video>
+        <a class="overlay-link" href="#" data-overlay-link>open project</a>
+      </div>
+
+      <div class="overlay-meta">
+        <div class="overlay-tag" data-overlay-tag></div>
+        <div class="overlay-project" data-overlay-project></div>
+        <div class="overlay-sub" data-overlay-sub></div>
+
+        <div class="overlay-copy">
+          <p>Launch campaign for @helinoxwear - a brand new apparel collection designed by @helinox</p>
+          <p>Creative Agency: Bravo. Charlie. Mike. Hotel. @b_c_m_h<br />Creative Director: Ben Chatfield @benchatfield<br />Art Director: Joe Page-Brown @joepagebrown</p>
+          <p>Production: It’s Possible Productions @itspossible.productions<br />Executive Producer: Kimberley English @kimberleyenglish<br />Producer: Jack Tyler @jcktylr_</p>
+          <p>Photographer: Rory Griffin @rory_griffs<br />Director/DOP: Paddy Gomulski @paddygomulski<br />1st Assistant: Tommy Aucott @tom.aucott<br />Locations &amp; Casting: Jack Tyler @jcktylr_<br />Talent: Wei Du @du_wei_ Callum Sek @callumsek Cathrina Torres @cathrinatorres_<br />Stylist: Tia Clarke @tiaclxrke</p>
+          <p>Post Production: Avenues @avenues.studio<br />Edit Producer: Zeena Al-Faham @zeena95<br />Editor: Adam Todhunter @adam.todhunter<br />Colourist: John Layton @johnlaytoncolour<br />Sound Design and Mix: Klong @klong_sound</p>
+          <p>Retouching @daniellepaintingretoucher</p>
+          <p>And a huge thank you to @okkassie</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script is:inline>
   (() => {
-    document.querySelectorAll("video[data-hover-play]").forEach((v) => {
-      const wrap = v.closest("a");
-      if (!wrap) return;
+    const overlay = document.querySelector("[data-overlay]");
+    const closeBtn = overlay?.querySelector("[data-overlay-close]");
+    const tagEl = overlay?.querySelector("[data-overlay-tag]");
+    const projectEl = overlay?.querySelector("[data-overlay-project]");
+    const subEl = overlay?.querySelector("[data-overlay-sub]");
+    const linkEl = overlay?.querySelector("[data-overlay-link]");
+    const videoEl = overlay?.querySelector("[data-overlay-video]");
+    const sourceEl = overlay?.querySelector("[data-overlay-source]");
 
+    const openFullscreen = async () => {
+      if (!videoEl) return;
+      const el = videoEl;
+      const request =
+        el.requestFullscreen ||
+        el.webkitRequestFullscreen ||
+        el.msRequestFullscreen;
+
+      if (request) {
+        try {
+          await request.call(el);
+          await el.play?.();
+          return;
+        } catch {}
+      }
+
+      if (linkEl?.href) {
+        window.open(linkEl.href, "_blank", "noopener,noreferrer");
+      }
+    };
+
+    const updateOverlay = (item) => {
+      if (!overlay || !videoEl || !sourceEl) return;
+
+      const tag = item.dataset.tag || "watch";
+      const project = item.dataset.project || "";
+      const loc = item.dataset.loc || "";
+      const year = item.dataset.year || "";
+      const title = item.dataset.title || "";
+      const href = item.dataset.href || "#";
+      const poster = item.dataset.poster || "";
+      const video = item.dataset.video || "";
+
+      if (tagEl) tagEl.textContent = tag;
+      if (projectEl) projectEl.textContent = project || title;
+      if (subEl) subEl.textContent = [loc, title, year].filter(Boolean).join(" • ");
+      if (linkEl) linkEl.href = href;
+
+      if (poster) {
+        videoEl.setAttribute("poster", poster);
+      } else {
+        videoEl.removeAttribute("poster");
+      }
+
+      sourceEl.src = video;
+      videoEl.load();
+    };
+
+    const openOverlay = (item) => {
+      if (!overlay) return;
+      updateOverlay(item);
+      overlay.classList.add("is-open");
+      overlay.removeAttribute("aria-hidden");
+      requestAnimationFrame(() => {
+        try {
+          videoEl?.play();
+        } catch {}
+      });
+    };
+
+    const closeOverlay = () => {
+      if (!overlay) return;
+      overlay.classList.remove("is-open");
+      overlay.setAttribute("aria-hidden", "true");
+      videoEl?.pause();
+    };
+
+    closeBtn?.addEventListener("click", closeOverlay);
+
+    overlay?.addEventListener("click", (e) => {
+      if (e.target === overlay) closeOverlay();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeOverlay();
+    });
+
+    linkEl?.addEventListener("click", (e) => {
+      e.preventDefault();
+      openFullscreen();
+    });
+
+    document.querySelectorAll(".workItem").forEach((item) => {
+      const handleOpen = (e) => {
+        if (e.type === "mousedown" && e.button !== 0) return;
+        e.preventDefault();
+        openOverlay(item);
+      };
+
+      item.addEventListener("mousedown", handleOpen);
+      item.addEventListener("click", (e) => e.preventDefault());
+      item.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openOverlay(item);
+        }
+      });
+    });
+
+    document.querySelectorAll("video[data-hover-play]").forEach((v) => {
       const play = async () => {
         try {
+          v.muted = true;
           v.currentTime = 0;
           await v.play();
         } catch {}
@@ -64,10 +216,15 @@ const workItems = items as WorkItem[];
         v.currentTime = 0;
       };
 
-      wrap.addEventListener("mouseenter", play);
-      wrap.addEventListener("mouseleave", stop);
-      wrap.addEventListener("focusin", play);
-      wrap.addEventListener("focusout", stop);
+      const wrap = v.closest("a");
+      const targets = [v, wrap].filter(Boolean);
+
+      targets.forEach((t) => {
+        t.addEventListener("mouseenter", play);
+        t.addEventListener("mouseleave", stop);
+        t.addEventListener("focusin", play);
+        t.addEventListener("focusout", stop);
+      });
     });
   })();
 </script>
@@ -78,7 +235,7 @@ const workItems = items as WorkItem[];
     --text: #111;
     --line: #e6e6e6;
 
-    --gutter: 0px;
+    --gutter: 10px;
     --section-mt: 1px;
   }
 
@@ -96,6 +253,8 @@ const workItems = items as WorkItem[];
   .workItem {
     display: grid;
     grid-template-rows: auto auto;
+    align-content: start;
+    margin-bottom: 100px;
   }
 
   .media {
@@ -114,11 +273,6 @@ const workItems = items as WorkItem[];
     display: block;
     transform: scale(1);
     transition: transform 200ms ease;
-  }
-
-  .media:hover .vid,
-  .media:focus-visible .vid {
-    transform: scale(1.02);
   }
 
   .watch {
@@ -140,8 +294,6 @@ const workItems = items as WorkItem[];
     grid-template-columns: 1fr 1.6fr 0.8fr;
     gap: 18px;
     align-items: start;
-
-    padding-top: 12px;
     border-top: 1px solid var(--line);
 
     font-size: 14px;
@@ -163,13 +315,12 @@ const workItems = items as WorkItem[];
     opacity: 0.8;
   }
 
-  .code {
-    justify-self: end;
-      align-self: start;   /* lodret: top af grid-cellen */
-    font-size: 44px;
+   .project {
+     font-size: 44px;
+     margin-top: -10px;
     font-weight: 600;
     letter-spacing: 0.01em;
-    transform: translateX(-8px);
+    transform: translateX(-8px)
   }
 
   .media:focus-visible {
@@ -195,7 +346,7 @@ const workItems = items as WorkItem[];
       white-space: nowrap;
     }
 
-    .code {
+    .project {
       justify-self: start;
       font-size: 32px;
       transform: translateX(-6px);
@@ -205,6 +356,138 @@ const workItems = items as WorkItem[];
   @media (prefers-reduced-motion: reduce) {
     .vid {
       transition: none;
+    }
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    justify-content: flex-end;
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(1px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms var(--ease, cubic-bezier(0.4, 0, 0.2, 1));
+  }
+
+  .overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .overlay-panel {
+    position: relative;
+    width: min(720px, 95vw);
+    height: 100%;
+    background: #f8f8f8;
+    color: #111;
+    padding: 32px 28px 40px;
+    transform: translateX(100%);
+    transition: transform 280ms var(--ease, cubic-bezier(0.4, 0, 0.2, 1));
+    overflow-y: auto;
+    font-family: var(--font);
+    box-shadow: -12px 0 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .overlay.is-open .overlay-panel {
+    transform: translateX(0);
+  }
+
+  .overlay-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    border: 0;
+    background: none;
+    text-transform: lowercase;
+    font-size: 14px;
+    cursor: pointer;
+    color: inherit;
+    letter-spacing: 0.01em;
+  }
+
+  .overlay-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 12px;
+    align-items: start;
+  }
+
+  .overlay-meta {
+    display: grid;
+    gap: 10px;
+  }
+
+  .overlay-tag {
+    font-size: 14px;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+  }
+
+  .overlay-project {
+    font-size: 44px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.05;
+  }
+
+  .overlay-sub {
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+    opacity: 0.8;
+  }
+
+  .overlay-media {
+    display: grid;
+    gap: 12px;
+    position: sticky;
+    top: 16px;
+  }
+
+  .overlay-video {
+    width: 100%;
+    border: 1px solid #e6e6e6;
+    background: #000;
+  }
+
+  .overlay-link {
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    text-transform: lowercase;
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    width: fit-content;
+  }
+
+  .overlay-copy {
+    display: grid;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+  }
+
+  .overlay-copy p {
+    margin: 0;
+  }
+
+  @media (max-width: 900px) {
+    .overlay-body {
+      grid-template-columns: 1fr;
+    }
+
+    .overlay-media {
+      position: static;
+    }
+
+    .overlay-panel {
+      width: 100%;
     }
   }
 </style>

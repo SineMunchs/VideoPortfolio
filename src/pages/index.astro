@@ -1,11 +1,21 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Nav from '../components/nav.astro';
-import Welcome from '../components/Welcome.astro';
+import WorkGrid from '../components/workGrid.astro';
 ---
 
 <Layout>
   <Nav />
-
-  <Welcome />
+  <h1 class="pageTitle">work</h1>
+  <WorkGrid />
 </Layout>
+
+<style>
+  .pageTitle {
+    margin-top: 70px;
+    font-family: var(--font);
+    font-size: 8rem;
+    font-weight: bold;
+    text-align: right;
+  }
+</style>
