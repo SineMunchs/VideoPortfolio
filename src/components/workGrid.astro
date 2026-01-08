@@ -11,63 +11,79 @@ type WorkItem = {
   title: string;
   year: string;
   project: string;
+  overlay?: string;
 };
 
 const workItems = items as WorkItem[];
 ---
 
 <section class="workRow" aria-label="Selected work">
-  {workItems.map((item) => (
-    <article
-      class="workItem"
-      id={item.id}
-      tabindex="0"
-      data-id={item.id}
-      data-project={item.project}
-      data-title={item.title}
-      data-year={item.year}
-      data-loc={item.loc}
-      data-tag={item.tag ?? "watch"}
-      data-video={item.videoSrc}
-      data-poster={item.poster}
-      data-href={item.href}
-    >
-      <a class="media" href={item.href} aria-label={`Open ${item.project}`}>
-        <video
-          class="vid"
-          muted
-          playsinline
-          preload="metadata"
-          poster={item.poster}
-          data-hover-play
-        >
-          <source src={item.videoSrc} type="video/mp4" />
-        </video>
+  {
+    workItems.map((item) => (
+      <article
+        class="workItem"
+        id={item.id}
+        tabindex="0"
+        data-id={item.id}
+        data-project={item.project}
+        data-title={item.title}
+        data-year={item.year}
+        data-loc={item.loc}
+        data-tag={item.tag ?? "watch"}
+        data-video={item.videoSrc}
+        data-poster={item.poster}
+        data-href={item.href}
+        data-overlay-text={item.overlay ?? ""}
+      >
+        <a class="media" href={item.href} aria-label={`Open ${item.project}`}>
+          <video
+            class="vid"
+            muted
+            playsinline
+            preload="metadata"
+            poster={item.poster}
+            data-hover-play
+          >
+            <source src={item.videoSrc} type="video/mp4" />
+          </video>
 
-        <span class="watch">{item.tag ?? "watch"}</span>
-      </a>
+          <span class="watch">{item.tag ?? "watch"}</span>
+        </a>
 
-      <div class="metaGrid" aria-label="Project metadata">
-        <div class="meta">{item.loc}</div>
-        <div class="meta metaInline">
-          <span>{item.title}</span>
-          <span class="metaYear">{item.year}</span>
+        <div class="metaGrid" aria-label="Project metadata">
+          <div class="meta">{item.loc}</div>
+          <div class="meta metaInline">
+            <span>{item.title}</span>
+            <span class="metaYear">{item.year}</span>
+          </div>
+          <div class="meta project">{item.project}</div>
         </div>
-        <div class="meta project">{item.project}</div>
-      </div>
-    </article>
-  ))}
+      </article>
+    ))
+  }
 </section>
 
 <div class="overlay" data-overlay aria-hidden="true">
   <div class="overlay-panel">
-    <button class="overlay-close" type="button" data-overlay-close aria-label="Close project overlay">
+    <button
+      class="overlay-close"
+      type="button"
+      data-overlay-close
+      aria-label="Close project overlay"
+    >
       close
     </button>
 
     <div class="overlay-body">
       <div class="overlay-media">
-        <video class="overlay-video" playsinline controls muted autoplay data-overlay-video>
+        <video
+          class="overlay-video"
+          playsinline
+          controls
+          muted
+          autoplay
+          data-overlay-video
+        >
           <source data-overlay-source type="video/mp4" />
         </video>
         <a class="overlay-link" href="#" data-overlay-link>open project</a>
@@ -78,12 +94,34 @@ const workItems = items as WorkItem[];
         <div class="overlay-project" data-overlay-project></div>
         <div class="overlay-sub" data-overlay-sub></div>
 
-        <div class="overlay-copy">
-          <p>Launch campaign for @helinoxwear - a brand new apparel collection designed by @helinox</p>
-          <p>Creative Agency: Bravo. Charlie. Mike. Hotel. @b_c_m_h<br />Creative Director: Ben Chatfield @benchatfield<br />Art Director: Joe Page-Brown @joepagebrown</p>
-          <p>Production: It’s Possible Productions @itspossible.productions<br />Executive Producer: Kimberley English @kimberleyenglish<br />Producer: Jack Tyler @jcktylr_</p>
-          <p>Photographer: Rory Griffin @rory_griffs<br />Director/DOP: Paddy Gomulski @paddygomulski<br />1st Assistant: Tommy Aucott @tom.aucott<br />Locations &amp; Casting: Jack Tyler @jcktylr_<br />Talent: Wei Du @du_wei_ Callum Sek @callumsek Cathrina Torres @cathrinatorres_<br />Stylist: Tia Clarke @tiaclxrke</p>
-          <p>Post Production: Avenues @avenues.studio<br />Edit Producer: Zeena Al-Faham @zeena95<br />Editor: Adam Todhunter @adam.todhunter<br />Colourist: John Layton @johnlaytoncolour<br />Sound Design and Mix: Klong @klong_sound</p>
+        <div class="overlay">
+          <p>
+            Launch campaign for @helinoxwear - a brand new apparel collection
+            designed by @helinox
+          </p>
+          <p>
+            Creative Agency: Bravo. Charlie. Mike. Hotel. @b_c_m_h<br />Creative
+            Director: Ben Chatfield @benchatfield<br />Art Director: Joe
+            Page-Brown @joepagebrown
+          </p>
+          <p>
+            Production: It’s Possible Productions @itspossible.productions<br
+            />Executive Producer: Kimberley English @kimberleyenglish<br
+            />Producer: Jack Tyler @jcktylr_
+          </p>
+          <p>
+            Photographer: Rory Griffin @rory_griffs<br />Director/DOP: Paddy
+            Gomulski @paddygomulski<br />1st Assistant: Tommy Aucott @tom.aucott<br
+            />Locations &amp; Casting: Jack Tyler @jcktylr_<br />Talent: Wei Du
+            @du_wei_ Callum Sek @callumsek Cathrina Torres @cathrinatorres_<br
+            />Stylist: Tia Clarke @tiaclxrke
+          </p>
+          <p>
+            Post Production: Avenues @avenues.studio<br />Edit Producer: Zeena
+            Al-Faham @zeena95<br />Editor: Adam Todhunter @adam.todhunter<br
+            />Colourist: John Layton @johnlaytoncolour<br />Sound Design and
+            Mix: Klong @klong_sound
+          </p>
           <p>Retouching @daniellepaintingretoucher</p>
           <p>And a huge thank you to @okkassie</p>
         </div>
@@ -99,6 +137,7 @@ const workItems = items as WorkItem[];
     const tagEl = overlay?.querySelector("[data-overlay-tag]");
     const projectEl = overlay?.querySelector("[data-overlay-project]");
     const subEl = overlay?.querySelector("[data-overlay-sub]");
+    const descriptionEl = overlay?.querySelector("[data-overlay-description]");
     const linkEl = overlay?.querySelector("[data-overlay-link]");
     const videoEl = overlay?.querySelector("[data-overlay-video]");
     const sourceEl = overlay?.querySelector("[data-overlay-source]");
@@ -135,10 +174,13 @@ const workItems = items as WorkItem[];
       const href = item.dataset.href || "#";
       const poster = item.dataset.poster || "";
       const video = item.dataset.video || "";
+      const overlayText = item.dataset.overlayText || "";
 
       if (tagEl) tagEl.textContent = tag;
       if (projectEl) projectEl.textContent = project || title;
-      if (subEl) subEl.textContent = [loc, title, year].filter(Boolean).join(" • ");
+      if (subEl)
+        subEl.textContent = [loc, title, year].filter(Boolean).join(" • ");
+      if (descriptionEl) descriptionEl.textContent = overlayText;
       if (linkEl) linkEl.href = href;
 
       if (poster) {
@@ -315,12 +357,12 @@ const workItems = items as WorkItem[];
     opacity: 0.8;
   }
 
-   .project {
-     font-size: 44px;
-     margin-top: -10px;
+  .project {
+    font-size: 44px;
+    margin-top: -10px;
     font-weight: 600;
     letter-spacing: 0.01em;
-    transform: translateX(-8px)
+    transform: translateX(-8px);
   }
 
   .media:focus-visible {

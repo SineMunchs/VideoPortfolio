@@ -9,7 +9,7 @@
     "title": "brand",
     "year": "2025",
     "project": "name",
-    "overlay": "text here"
+    "overlay": "This is the overlay text for project 2. You can add different descriptions, credits, or any information for each individual project."
   },
   {
     "id": "2",
@@ -20,7 +20,8 @@
     "loc": "country, short",
     "title": "brand",
     "year": "2025",
-    "project": "name"
+    "project": "name",
+    "overlay": "text here"
   }, 
   {
     "id": "3",
@@ -43,5 +44,28 @@
     "title": "brand",
     "year": "2025",
     "project": "name"
-  }    
+  }, 
+  {
+    "id": "1",
+    "href": "/work/gp02",
+    "poster": "/assets/run.png",
+    "videoSrc": "/assets/run.mp4",
+    "tag": "watch",
+    "loc": "country, short",
+    "title": "brand",
+    "year": "2025",
+    "project": "name",
+    "overlay": "text here"
+  },
+  {
+    "id": "2",
+    "href": "/work/gq12",
+    "poster": "/assets/walk.png",
+    "videoSrc": "/assets/walk.mp4",
+    "tag": "watch",
+    "loc": "country, short",
+    "title": "brand",
+    "year": "2025",
+    "project": "name"
+  }
 ]
