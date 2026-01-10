@@ -6,8 +6,9 @@ type WorkItem = {
   href: string;
   poster: string;
   videoSrc: string;
+  videoWebm?: string;
   tag?: string;
-  loc: string;
+  role: string;
   title: string;
   year: string;
   project: string;
@@ -16,6 +17,8 @@ type WorkItem = {
 
 const workItems = items as WorkItem[];
 ---
+
+<!--  https://www.bittercreek.studio/projects/ghostpoet-oh-lord-->
 
 <section class="workRow" aria-label="Selected work">
   {
@@ -28,9 +31,10 @@ const workItems = items as WorkItem[];
         data-project={item.project}
         data-title={item.title}
         data-year={item.year}
-        data-loc={item.loc}
+        data-role={item.role}
         data-tag={item.tag ?? "watch"}
         data-video={item.videoSrc}
+        data-video-webm={item.videoWebm ?? ""}
         data-poster={item.poster}
         data-href={item.href}
         data-overlay-text={item.overlay ?? ""}
@@ -44,6 +48,9 @@ const workItems = items as WorkItem[];
             poster={item.poster}
             data-hover-play
           >
+            {item.videoWebm ? (
+              <source src={item.videoWebm} type="video/webm" />
+            ) : null}
             <source src={item.videoSrc} type="video/mp4" />
           </video>
 
@@ -51,7 +58,7 @@ const workItems = items as WorkItem[];
         </a>
 
         <div class="metaGrid" aria-label="Project metadata">
-          <div class="meta">{item.loc}</div>
+          <div class="meta">{item.role}</div>
           <div class="meta metaInline">
             <span>{item.title}</span>
             <span class="metaYear">{item.year}</span>
@@ -84,6 +91,7 @@ const workItems = items as WorkItem[];
           autoplay
           data-overlay-video
         >
+          <source data-overlay-source-webm type="video/webm" />
           <source data-overlay-source type="video/mp4" />
         </video>
         <a class="overlay-link" href="#" data-overlay-link>open project</a>
@@ -94,41 +102,13 @@ const workItems = items as WorkItem[];
         <div class="overlay-project" data-overlay-project></div>
         <div class="overlay-sub" data-overlay-sub></div>
 
-        <div class="overlay">
-          <p>
-            Launch campaign for @helinoxwear - a brand new apparel collection
-            designed by @helinox
-          </p>
-          <p>
-            Creative Agency: Bravo. Charlie. Mike. Hotel. @b_c_m_h<br />Creative
-            Director: Ben Chatfield @benchatfield<br />Art Director: Joe
-            Page-Brown @joepagebrown
-          </p>
-          <p>
-            Production: It’s Possible Productions @itspossible.productions<br
-            />Executive Producer: Kimberley English @kimberleyenglish<br
-            />Producer: Jack Tyler @jcktylr_
-          </p>
-          <p>
-            Photographer: Rory Griffin @rory_griffs<br />Director/DOP: Paddy
-            Gomulski @paddygomulski<br />1st Assistant: Tommy Aucott @tom.aucott<br
-            />Locations &amp; Casting: Jack Tyler @jcktylr_<br />Talent: Wei Du
-            @du_wei_ Callum Sek @callumsek Cathrina Torres @cathrinatorres_<br
-            />Stylist: Tia Clarke @tiaclxrke
-          </p>
-          <p>
-            Post Production: Avenues @avenues.studio<br />Edit Producer: Zeena
-            Al-Faham @zeena95<br />Editor: Adam Todhunter @adam.todhunter<br
-            />Colourist: John Layton @johnlaytoncolour<br />Sound Design and
-            Mix: Klong @klong_sound
-          </p>
-          <p>Retouching @daniellepaintingretoucher</p>
-          <p>And a huge thank you to @okkassie</p>
-        </div>
+        <div class="overlay-copy">
+          <p data-overlay-description></p>
       </div>
     </div>
   </div>
 </div>
+
 
 <script is:inline>
   (() => {
@@ -141,6 +121,7 @@ const workItems = items as WorkItem[];
     const linkEl = overlay?.querySelector("[data-overlay-link]");
     const videoEl = overlay?.querySelector("[data-overlay-video]");
     const sourceEl = overlay?.querySelector("[data-overlay-source]");
+    const webmSourceEl = overlay?.querySelector("[data-overlay-source-webm]");
 
     const openFullscreen = async () => {
       if (!videoEl) return;
@@ -168,25 +149,34 @@ const workItems = items as WorkItem[];
 
       const tag = item.dataset.tag || "watch";
       const project = item.dataset.project || "";
-      const loc = item.dataset.loc || "";
+      const role = item.dataset.role || "";
       const year = item.dataset.year || "";
       const title = item.dataset.title || "";
       const href = item.dataset.href || "#";
       const poster = item.dataset.poster || "";
       const video = item.dataset.video || "";
+      const videoWebm = item.dataset.videoWebm || "";
       const overlayText = item.dataset.overlayText || "";
 
       if (tagEl) tagEl.textContent = tag;
       if (projectEl) projectEl.textContent = project || title;
       if (subEl)
-        subEl.textContent = [loc, title, year].filter(Boolean).join(" • ");
-      if (descriptionEl) descriptionEl.textContent = overlayText;
+        subEl.textContent = [role, title, year].filter(Boolean).join(" • ");
+  if (descriptionEl) descriptionEl.innerHTML = overlayText; // <-- changed
       if (linkEl) linkEl.href = href;
 
       if (poster) {
         videoEl.setAttribute("poster", poster);
       } else {
         videoEl.removeAttribute("poster");
+      }
+
+      if (webmSourceEl) {
+        if (videoWebm) {
+          webmSourceEl.src = videoWebm;
+        } else {
+          webmSourceEl.removeAttribute("src");
+        }
       }
 
       sourceEl.src = video;
@@ -273,7 +263,6 @@ const workItems = items as WorkItem[];
 
 <style>
   :root {
-    --font: "Unica 77 Monollsub", Inter, Arial, sans-serif;
     --text: #111;
     --line: #e6e6e6;
 
@@ -319,8 +308,8 @@ const workItems = items as WorkItem[];
 
   .watch {
     position: absolute;
-    top: 14px;
-    left: 14px;
+    top: 0px;
+    left: 10px;
 
     font-size: 22px;
     text-transform: lowercase;

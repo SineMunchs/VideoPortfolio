@@ -2,70 +2,25 @@
   {
     "id": "1",
     "href": "/work/gp02",
-    "poster": "/assets/run.png",
-    "videoSrc": "/assets/run.mp4",
+    "poster": "/assets/1.salomon.png",
+    "videoSrc": "assets/1.salomon.mp4",
     "tag": "watch",
-    "loc": "country, short",
-    "title": "brand",
+    "role": "DOP",
+    "title": "",
     "year": "2025",
-    "project": "name",
-    "overlay": "This is the overlay text for project 2. You can add different descriptions, credits, or any information for each individual project."
+    "project": "salomon",
+    "overlay": "NO-LINE-PURPOSE <br> Creative Production @oraefi.lab Producer @bjarturnorthfjord Director / Photographer @rory_griffs DOP @paddygomulski Assistant Isakernir Models @arn_einars @sunnahardardottir @ibrahim_kolbeinn Sound Kári Siguroarson Edit @annadownie_ Colourist @johnlaytoncolour"
   },
   {
     "id": "2",
     "href": "/work/gq12",
-    "poster": "/assets/walk.png",
-    "videoSrc": "/assets/walk.mp4",
+    "poster": "/assets/2.helinox.png",
+    "videoSrc": "/assets/2.helinox.mp4",
     "tag": "watch",
-    "loc": "country, short",
-    "title": "brand",
-    "year": "2025",
-    "project": "name",
-    "overlay": "text here"
-  }, 
-  {
-    "id": "3",
-    "href": "/work/gr23",
-    "poster": "/assets/fly.png",
-    "videoSrc": "/assets/fly.mp4",
-    "tag": "watch",
-    "loc": "country, short",
-    "title": "brand",
-    "year": "2025",
-    "project": "name"
-  }, 
-   {
-    "id": "4",
-    "href": "/work/gq12",
-    "poster": "/assets/run.png",
-    "videoSrc": "/assets/switch.mp4",
-    "tag": "watch",
-    "loc": "country, short",
-    "title": "brand",
-    "year": "2025",
-    "project": "name"
-  }, 
-  {
-    "id": "1",
-    "href": "/work/gp02",
-    "poster": "/assets/run.png",
-    "videoSrc": "/assets/run.mp4",
-    "tag": "watch",
-    "loc": "country, short",
-    "title": "brand",
-    "year": "2025",
-    "project": "name",
-    "overlay": "text here"
-  },
-  {
-    "id": "2",
-    "href": "/work/gq12",
-    "poster": "/assets/walk.png",
-    "videoSrc": "/assets/walk.mp4",
-    "tag": "watch",
-    "loc": "country, short",
-    "title": "brand",
-    "year": "2025",
-    "project": "name"
+    "role": "DIRECTOR/ DOP",
+    "title": "",
+    "year": "SS25",
+    "project": "helinox",
+    "overlay": ""
   }
 ]

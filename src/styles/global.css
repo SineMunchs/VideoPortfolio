@@ -7,8 +7,7 @@
 
 body {
   background-color: #f9f9f9;
-  /* Bitter Creek font stack */
-  --font: "Unica 77 Monollsub", Inter, Arial, sans-serif;
+  --font: "helvetica", helvetica, Arial, sans-serif;
   z-index: 50;
   margin: 0;
 }
