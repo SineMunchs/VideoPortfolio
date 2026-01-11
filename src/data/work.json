@@ -1,17 +1,5 @@
 [
   {
-    "id": "1",
-    "href": "/work/gp02",
-    "poster": "/assets/1.salomon.png",
-    "videoSrc": "assets/1.salomon.mp4",
-    "tag": "watch",
-    "role": "DOP",
-    "title": "",
-    "year": "2025",
-    "project": "salomon",
-    "overlay": "NO-LINE-PURPOSE <br> Creative Production @oraefi.lab Producer @bjarturnorthfjord Director / Photographer @rory_griffs DOP @paddygomulski Assistant Isakernir Models @arn_einars @sunnahardardottir @ibrahim_kolbeinn Sound Kári Siguroarson Edit @annadownie_ Colourist @johnlaytoncolour"
-  },
-  {
     "id": "2",
     "href": "/work/gq12",
     "poster": "/assets/2.helinox.png",
@@ -21,6 +9,18 @@
     "title": "",
     "year": "SS25",
     "project": "helinox",
-    "overlay": ""
-  }
+    "overlay": "Launch campaign for Helinoxwear – a brand new apparel collection designed by Helinox<br><br>Creative Agency: Bravo. Charlie. Mike. Hotel.<br>BCMH<br>Creative Director: Ben Chatfield<br>Art Director: Joe Page-Brown<br><br>Production: It’s Possible Productions<br>Executive Producer: Kimberley English<br>Producer: Jack Tyler<br><br>Photographer: Rory Griffin<br>Director/DOP: Paddy Gomulski<br>1st Assistant: Tommy Aucott<br>Locations & Casting: Jack Tyler<br>Talent: Wei Du<br>Callum Sek<br>Cathrina Torres<br>Stylist: Tia Clarke<br><br>Post Production: Avenues<br>Edit Producer: Zeena Al-Faham<br>Editor: Adam Todhunter<br>Colourist: John Layton<br>Sound Design and Mix: Klong<br><br>Retouching: Danielle Painting Retoucher<br><br>And a huge thank you to Okkassie"
+},
+  {
+    "id": "1",
+    "href": "/work/gp02",
+    "poster": "/assets/1.salomon.png",
+    "videoSrc": "assets/1.salomon.mp4",
+    "tag": "watch",
+    "role": "DOP",
+    "title": "",
+    "year": "2025",
+    "project": "salomon",
+    "overlay": "@salomon_kr NO-LINE-PURPOSE—<br><br>-<br>Creative Production @oraefi.lab<br>Producer @bjarturnorthfjord<br>Director / Photographer @rory_griffs<br>DOP @paddygomulski<br>Assistant Isakernir<br>Models @arn_einars @sunnahardardottir<br>@ibrahim_kolbeinn<br>Sound Kári Siguroarson<br>Edit @annadownie_<br>Colourist @johnlaytoncolour"
+}
 ]

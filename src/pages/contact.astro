@@ -1,10 +1,36 @@
 ---
 import Nav from "../components/nav.astro";
 import Layout from "../layouts/Layout.astro";
+import Footer from "../components/footer.astro";
+import "../styles/global.css";
 ---
 
 <Layout>
   <Nav />
-  <h1 class="font-bold mt-20 right-0">Contact</h1>
-  <p>paddyblog@gmail.com</p>
+  <h1 class="pageTitle">Contact</h1>
+  <p class="information">paddyblog@gmail.com</p>
+  <p class="information">+44 7906 552 769</p>
+  <Footer />
 </Layout>
+
+<style>
+  html,
+  body {
+    font-family: var(--font);
+  }
+
+      .pageTitle {
+        margin-top: 70px;
+        font-family: var(--font);
+        font-size: 5rem;
+        font-weight: bold;
+        text-align: right;
+         }
+
+        .information {
+         font-family: var(--font);
+        font-size: 1rem;
+        text-align: right;
+        } 
+   
+</style>
