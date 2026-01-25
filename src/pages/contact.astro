@@ -8,29 +8,102 @@ import "../styles/global.css";
 <Layout>
   <Nav />
   <h1 class="pageTitle">Contact</h1>
-  <p class="information">paddyblog@gmail.com</p>
-  <p class="information">+44 7906 552 769</p>
+    <div class="contact-info">
+      <button type="button" class="information tooltip-parent" id="copy-email" data-copy="paddyblog@gmail.com">
+        <span>paddyblog@gmail.com</span>
+        <span class="footer-tooltip">Email copied</span>
+      </button>
+      <button type="button" class="information tooltip-parent" id="copy-phone" data-copy="+44 7906 552 769">
+        <span>+44 7906 552 769</span>
+        <span class="footer-tooltip">number copied</span>
+      </button>
+    </div>
   <Footer />
 </Layout>
+
+  <script>
+    function setupCopy(id, tooltipText) {
+      const btn = document.getElementById(id);
+      btn?.addEventListener("mousedown", () => {
+        btn.classList.add("show-tooltip");
+      });
+      btn?.addEventListener("mouseup", () => {
+        setTimeout(() => {
+          btn.classList.remove("show-tooltip");
+        }, 400);
+      });
+      btn?.addEventListener("mouseleave", () => {
+        btn.classList.remove("show-tooltip");
+      });
+      btn?.addEventListener("click", async () => {
+        const value = btn.dataset.copy;
+        try {
+          await navigator.clipboard.writeText(value);
+          console.log(tooltipText + " copied to clipboard");
+        } catch (err) {
+          console.error("Failed to copy " + tooltipText, err);
+        }
+      });
+    }
+    setupCopy("copy-email", "Email");
+    setupCopy("copy-phone", "Phone");
+  </script>
 
 <style>
   html,
   body {
     font-family: var(--font);
   }
-
-      .pageTitle {
-        margin-top: 70px;
-        font-family: var(--font);
-        font-size: 5rem;
-        font-weight: bold;
-        text-align: right;
-         }
-
-        .information {
-         font-family: var(--font);
-        font-size: 1rem;
-        text-align: right;
-        } 
-   
+  .pageTitle {
+    margin-top: 70px;
+    font-family: var(--font);
+    font-size: 5rem;
+    font-weight: bold;
+    text-align: right;
+  }
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .information {
+    font-family: var(--font);
+    font-size: 1rem;
+    text-align: right;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    padding: 0.2rem 0.6rem;
+    margin: 0;
+    color: inherit;
+  }
+  .tooltip-parent {
+    position: relative;
+  }
+  .footer-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    background: #ffffff;
+    color: #000000;
+    text-align: center;
+    border-radius: 4px;
+    padding: 0.2rem 0.6rem;
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-size: 0.7rem;
+    z-index: 200;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    margin-right: 0.5rem;
+  }
+  .tooltip-parent.show-tooltip .footer-tooltip {
+    visibility: visible;
+    opacity: 1;
+  }
 </style>
