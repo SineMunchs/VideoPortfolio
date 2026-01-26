@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Ignore large video files
+public/assets/1.salomon.mp4
+public/assets/2.helinox.mp4
