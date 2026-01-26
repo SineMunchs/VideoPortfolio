@@ -7,6 +7,7 @@ type WorkItem = {
   poster: string;
   videoSrc: string;
   videoWebm?: string;
+  muxPlaybackId?: string;
   tag?: string;
   role: string;
   title: string;
@@ -20,9 +21,11 @@ const workItems = items as WorkItem[];
 
 <!--  https://www.bittercreek.studio/projects/ghostpoet-oh-lord-->
 
+
 <section class="workRow" aria-label="Selected work">
-  {
-    workItems.map((item) => (
+  {workItems.map((item) => {
+    const hasMux = Boolean(item.muxPlaybackId);
+    return (
       <article
         class="workItem"
         id={item.id}
@@ -36,27 +39,39 @@ const workItems = items as WorkItem[];
         data-video={item.videoSrc}
         data-video-webm={item.videoWebm ?? ""}
         data-poster={item.poster}
+        data-playback-id={item.muxPlaybackId ?? ""}
         data-href={item.href}
         data-overlay-text={item.overlay ?? ""}
       >
         <a class="media" href={item.href} aria-label={`Open ${item.project}`}>
-          <video
-            class="vid"
-            muted
-            playsinline
-            preload="metadata"
-            poster={item.poster}
-            data-hover-play
-          >
-            {item.videoWebm ? (
-              <source src={item.videoWebm} type="video/webm" />
-            ) : null}
-            <source src={item.videoSrc} type="video/mp4" />
-          </video>
-
+          {hasMux ? (
+            <mux-player
+              class="vid no-controls"
+              playback-id={item.muxPlaybackId}
+              poster={item.poster}
+              muted
+              playsinline
+              preload="metadata"
+              stream-type="on-demand"
+              no-controls
+              nohotkeys
+              data-hover-play
+            ></mux-player>
+          ) : (
+            <video
+              class="vid"
+              muted
+              playsinline
+              preload="metadata"
+              poster={item.poster}
+              data-hover-play
+            >
+              {item.videoWebm && <source src={item.videoWebm} type="video/webm" />}
+              <source src={item.videoSrc} type="video/mp4" />
+            </video>
+          )}
           <span class="watch">{item.tag ?? "watch"}</span>
         </a>
-
         <div class="metaGrid" aria-label="Project metadata">
           <div class="meta">{item.role}</div>
           <div class="meta metaInline">
@@ -66,9 +81,24 @@ const workItems = items as WorkItem[];
           <div class="meta project">{item.project}</div>
         </div>
       </article>
-    ))
-  }
+    );
+  })}
 </section>
+<style>
+/* Hide mux-player play button and control bar in grid */
+mux-player.no-controls::part(control-bar),
+mux-player.no-controls::part(play-button),
+mux-player.no-controls::part(center-play-button),
+mux-player.no-controls::part(top-play-button) {
+  display: none !important;
+}
+/* Fallback: hide play button in shadow DOM for browsers that don't support ::part fully */
+mux-player.no-controls [part~="center-play-button"],
+mux-player.no-controls [part~="play-button"],
+mux-player.no-controls [part~="top-play-button"] {
+  display: none !important;
+}
+</style>
 
 <div class="overlay" data-overlay aria-hidden="true">
   <div class="overlay-panel">
@@ -83,8 +113,15 @@ const workItems = items as WorkItem[];
 
     <div class="overlay-body">
       <div class="overlay-media">
+        <mux-player
+          class="overlay-video overlay-mux"
+          playback-id="HIfsKf4sdfGgJ1X700xLXFIcMA3izQd301D01N9gM1fTto"
+          muted
+          autoplay
+          hidden
+        ></mux-player>
         <video
-          class="overlay-video"
+          class="overlay-video overlay-native"
           playsinline
           controls
           muted
@@ -119,13 +156,26 @@ const workItems = items as WorkItem[];
     const subEl = overlay?.querySelector("[data-overlay-sub]");
     const descriptionEl = overlay?.querySelector("[data-overlay-description]");
     const linkEl = overlay?.querySelector("[data-overlay-link]");
-    const videoEl = overlay?.querySelector("[data-overlay-video]");
+    const muxEl = overlay?.querySelector("[data-overlay-mux]");
+    const nativeVideoEl = overlay?.querySelector("[data-overlay-video]");
     const sourceEl = overlay?.querySelector("[data-overlay-source]");
     const webmSourceEl = overlay?.querySelector("[data-overlay-source-webm]");
 
+    const getActivePlayer = () => {
+      if (muxEl && !muxEl.hasAttribute("hidden")) return muxEl;
+      return nativeVideoEl;
+    };
+
+    const getMedia = (el) => {
+      if (!el) return null;
+      if (typeof el.play === "function") return el;
+      if (el.media && typeof el.media.play === "function") return el.media;
+      return null;
+    };
+
     const openFullscreen = async () => {
-      if (!videoEl) return;
-      const el = videoEl;
+      const el = getMedia(getActivePlayer());
+      if (!el) return;
       const request =
         el.requestFullscreen ||
         el.webkitRequestFullscreen ||
@@ -145,7 +195,7 @@ const workItems = items as WorkItem[];
     };
 
     const updateOverlay = (item) => {
-      if (!overlay || !videoEl || !sourceEl) return;
+      if (!overlay || !sourceEl) return;
 
       const tag = item.dataset.tag || "watch";
       const project = item.dataset.project || "";
@@ -156,6 +206,7 @@ const workItems = items as WorkItem[];
       const poster = item.dataset.poster || "";
       const video = item.dataset.video || "";
       const videoWebm = item.dataset.videoWebm || "";
+      const playbackId = item.dataset.playbackId || "";
       const overlayText = item.dataset.overlayText || "";
 
       if (tagEl) tagEl.textContent = tag;
@@ -165,22 +216,37 @@ const workItems = items as WorkItem[];
   if (descriptionEl) descriptionEl.innerHTML = overlayText; // <-- changed
       if (linkEl) linkEl.href = href;
 
-      if (poster) {
-        videoEl.setAttribute("poster", poster);
-      } else {
-        videoEl.removeAttribute("poster");
-      }
-
-      if (webmSourceEl) {
-        if (videoWebm) {
-          webmSourceEl.src = videoWebm;
-        } else {
-          webmSourceEl.removeAttribute("src");
+      if (playbackId) {
+        if (muxEl) {
+          muxEl.removeAttribute("hidden");
+          muxEl.setAttribute("playback-id", playbackId);
+          if (poster) {
+            muxEl.setAttribute("poster", poster);
+          } else {
+            muxEl.removeAttribute("poster");
+          }
         }
-      }
+        nativeVideoEl?.setAttribute("hidden", "true");
+      } else {
+        muxEl?.setAttribute("hidden", "true");
+        if (poster) {
+          nativeVideoEl?.setAttribute("poster", poster);
+        } else {
+          nativeVideoEl?.removeAttribute("poster");
+        }
 
-      sourceEl.src = video;
-      videoEl.load();
+        if (webmSourceEl) {
+          if (videoWebm) {
+            webmSourceEl.src = videoWebm;
+          } else {
+            webmSourceEl.removeAttribute("src");
+          }
+        }
+
+        sourceEl.src = video;
+        nativeVideoEl?.removeAttribute("hidden");
+        nativeVideoEl?.load();
+      }
     };
 
     const openOverlay = (item) => {
@@ -190,7 +256,7 @@ const workItems = items as WorkItem[];
       overlay.removeAttribute("aria-hidden");
       requestAnimationFrame(() => {
         try {
-          videoEl?.play();
+          getMedia(getActivePlayer())?.play();
         } catch {}
       });
     };
@@ -199,7 +265,8 @@ const workItems = items as WorkItem[];
       if (!overlay) return;
       overlay.classList.remove("is-open");
       overlay.setAttribute("aria-hidden", "true");
-      videoEl?.pause();
+      getMedia(nativeVideoEl)?.pause();
+      getMedia(muxEl)?.pause();
     };
 
     closeBtn?.addEventListener("click", closeOverlay);
@@ -234,18 +301,22 @@ const workItems = items as WorkItem[];
       });
     });
 
-    document.querySelectorAll("video[data-hover-play]").forEach((v) => {
+    document.querySelectorAll("[data-hover-play]").forEach((v) => {
       const play = async () => {
         try {
-          v.muted = true;
-          v.currentTime = 0;
-          await v.play();
+          const media = getMedia(v);
+          if (!media) return;
+          media.muted = true;
+          media.currentTime = 0;
+          await media.play();
         } catch {}
       };
 
       const stop = () => {
-        v.pause();
-        v.currentTime = 0;
+        const media = getMedia(v);
+        if (!media) return;
+        media.pause();
+        media.currentTime = 0;
       };
 
       const wrap = v.closest("a");
