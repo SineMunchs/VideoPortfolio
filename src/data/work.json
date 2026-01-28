@@ -2,8 +2,7 @@
   {
     "id": "2",
     "href": "/work/gq12",
-    "poster": "/assets/2.helinox.png",
-    "videoSrc": "/assets/2.helinox.mp4",
+    "muxPlaybackId": "pi4s8eTA5nI38SDvBn01AUvmIaPmkgpC2dGUuZaeRga4",
     "tag": "watch",
     "role": "DIRECTOR/ DOP",
     "title": "",
@@ -14,9 +13,7 @@
   {
     "id": "1",
     "href": "/work/gp02",
-    "poster": "/assets/1.salomon.png",
     "muxPlaybackId": "HIfsKf4sdfGgJ1X700xLXFIcMA3izQd301D01N9gM1fTto",
-    "videoSrc": "assets/1.salomon.mp4",
     "tag": "watch",
     "role": "DOP",
     "title": "",

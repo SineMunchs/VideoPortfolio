@@ -1,5 +1,8 @@
 ---
+
+
 import items from "../data/work.json";
+import MuxPlayerFrame from "./MuxPlayerFrame.vue";
 
 type WorkItem = {
   id: string;
@@ -25,6 +28,7 @@ const workItems = items as WorkItem[];
 <section class="workRow" aria-label="Selected work">
   {workItems.map((item) => {
     const hasMux = Boolean(item.muxPlaybackId);
+    // If muxPlaybackId exists, always use Mux player, never fallback to local video
     return (
       <article
         class="workItem"
@@ -45,19 +49,16 @@ const workItems = items as WorkItem[];
       >
         <a class="media" href={item.href} aria-label={`Open ${item.project}`}>
           {hasMux ? (
-            <mux-player
-              class="vid no-controls"
-              playback-id={item.muxPlaybackId}
-              poster={item.poster}
-              muted
-              playsinline
-              preload="metadata"
-              stream-type="on-demand"
-              no-controls
-              nohotkeys
-              data-hover-play
-            ></mux-player>
-          ) : (
+                      <MuxPlayerFrame
+                        playbackId={item.muxPlaybackId}
+                        poster={item.poster}
+                        autoplay={false}
+                        loop={false}
+                        muted={true}
+                        data-hover-play
+                        client:only="vue"
+                      />
+                    ) : (
             <video
               class="vid"
               muted
@@ -115,7 +116,7 @@ mux-player.no-controls [part~="top-play-button"] {
       <div class="overlay-media">
         <mux-player
           class="overlay-video overlay-mux"
-          playback-id="HIfsKf4sdfGgJ1X700xLXFIcMA3izQd301D01N9gM1fTto"
+          data-overlay-mux
           muted
           autoplay
           hidden
@@ -302,26 +303,34 @@ mux-player.no-controls [part~="top-play-button"] {
     });
 
     document.querySelectorAll("[data-hover-play]").forEach((v) => {
+      // Apply hover/focus play logic to native video and mux-video/mux-player elements
+      const isNative = v.tagName === 'VIDEO';
+      const isMux = v.tagName === 'MUX-VIDEO' || v.tagName === 'MUX-PLAYER';
+      if (!isNative && !isMux) return;
       const play = async () => {
         try {
-          const media = getMedia(v);
-          if (!media) return;
-          media.muted = true;
-          media.currentTime = 0;
-          await media.play();
+          if (isNative) {
+            v.muted = true;
+            v.currentTime = 0;
+            await v.play();
+          } else if (isMux) {
+            v.muted = true;
+            v.currentTime = 0;
+            await v.play();
+          }
         } catch {}
       };
-
       const stop = () => {
-        const media = getMedia(v);
-        if (!media) return;
-        media.pause();
-        media.currentTime = 0;
+        if (isNative) {
+          v.pause();
+          v.currentTime = 0;
+        } else if (isMux) {
+          v.pause();
+          v.currentTime = 0;
+        }
       };
-
       const wrap = v.closest("a");
       const targets = [v, wrap].filter(Boolean);
-
       targets.forEach((t) => {
         t.addEventListener("mouseenter", play);
         t.addEventListener("mouseleave", stop);
