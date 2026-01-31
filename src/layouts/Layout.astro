@@ -10,8 +10,7 @@ const { title = 'paddy gomulski' } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <script type="module" src="https://unpkg.com/@mux/mux-player@latest"></script>
-    {/** Favicon */}
-    {Astro.glob('../layouts/favicon.astro').default()}
+    <link rel="icon" type="image/png" href="/paddy.png" />
   </head>
   <body>
     <main>
