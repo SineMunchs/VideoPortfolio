@@ -3,57 +3,46 @@ const email = "paddygblog@gmail.com";
 ---
 <footer class="footer">
     <div class="icon-row">
-        <button
-            type="button"
-            aria-label="Copy email address"
-            class="footer-icon-btn hover:text-gray-400 tooltip-parent"
-            id="copy-email"
-            data-email={email}
-            style="background: none; border: none; padding: 0; margin: 0; cursor: pointer; position: relative;"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="#374151" class="footer-icon">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M21.75 7.5v9A2.25 2.25 0 0 1 19.5 18.75h-15A2.25 2.25 0 0 1 2.25 16.5v-9m19.5 0A2.25 2.25 0 0 0 19.5 5.25h-15A2.25 2.25 0 0 0 2.25 7.5m19.5 0v.243a2.25 2.25 0 0 1-.977 1.872l-7.5 5.25a2.25 2.25 0 0 1-2.546 0l-7.5-5.25A2.25 2.25 0 0 1 2.25 7.743" />
-            </svg>
-            <span class="footer-tooltip">Email copied</span>
-        </button>
-        <a href="https://www.instagram.com/paddygomulski/" target="_blank" rel="noopener" aria-label="Instagram" class="hover:text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#374151" stroke-width="1" class="footer-icon">
-                <rect x="3" y="3" width="18" height="18" rx="5" stroke="#374151" stroke-width="1"/>
-                <circle cx="12" cy="12" r="4" stroke="#374151" stroke-width="1"/>
-                <circle cx="17" cy="7" r="1" fill="none"/>
-            </svg>
-        </a>
+      <span class="tooltip-parent" id="copy-email" data-copy="paddyblog@gmail.com" style="cursor: pointer; user-select: all; color: #374151;">
+        paddyblog@gmail.com 
+        <span class="footer-tooltip">Email copied</span>
+    </span>
+       <p style="margin: 0 0.2rem 0 0; display: inline;"> / </p><a href="https://www.instagram.com/paddygomulski/" target="_blank" rel="noopener" aria-label="Instagram" class="tooltip-parent instagram-link" style="margin-left: 0;">
+                instagram
+            </a>
     </div>
     <p>© 2024 paddy Gomulski. All rights reserved.</p>
 </footer>
 
 <script>
-    const btn = document.getElementById("copy-email");
-
-    btn?.addEventListener("mousedown", () => {
-        btn.classList.add("show-tooltip");
-    });
-
-    btn?.addEventListener("mouseup", () => {
-        setTimeout(() => {
+    function setupCopy(id, tooltipText) {
+        const btn = document.getElementById(id);
+        btn?.addEventListener("mousedown", () => {
+            btn.classList.add("show-tooltip");
+        });
+        btn?.addEventListener("mouseup", () => {
+            setTimeout(() => {
+                btn.classList.remove("show-tooltip");
+            }, 400);
+        });
+        btn?.addEventListener("mouseleave", () => {
             btn.classList.remove("show-tooltip");
-        }, 400);
-    });
-
-    btn?.addEventListener("mouseleave", () => {
-        btn.classList.remove("show-tooltip");
-    });
-
-    btn?.addEventListener("click", async () => {
-        const email = btn.dataset.email;
-        try {
-            await navigator.clipboard.writeText(email);
-            console.log("Email copied to clipboard");
-        } catch (err) {
-            console.error("Failed to copy email", err);
-        }
-    });
+        });
+        btn?.addEventListener("click", async () => {
+            const value = btn.dataset.copy;
+            try {
+                await navigator.clipboard.writeText(value);
+                btn.classList.add("show-tooltip");
+                setTimeout(() => {
+                    btn.classList.remove("show-tooltip");
+                }, 800);
+                console.log(tooltipText + " copied to clipboard");
+            } catch (err) {
+                console.error("Failed to copy " + tooltipText, err);
+            }
+        });
+    }
+    setupCopy("copy-email", "Email");
 </script>
 
 <style>
@@ -69,6 +58,7 @@ const email = "paddygblog@gmail.com";
                 justify-content: space-between;
                 z-index: 100;
                 font-family: 'Helvetica', Arial, sans-serif;
+                font-size: 0.6rem;
             }
             .icon-row {
                 display: flex;
@@ -76,26 +66,7 @@ const email = "paddygblog@gmail.com";
                 gap: 0.3rem;
                 margin-left: 1rem;
             }
-            .footer-icon {
-                width: 1.5rem;
-                height: 1.5rem;
-                vertical-align: middle;
-                transition: color 0.2s;
-            }
-            .footer-icon {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                background: none;
-            }
-            .footer-icon-btn {
-                background: none;
-                border: none;
-                padding: 0;
-                margin: 0;
-                cursor: pointer;
-                position: relative;
-            }
+            /* Cleaned up unused icon styles */
             .tooltip-parent {
                 position: relative;
             }
@@ -110,19 +81,26 @@ const email = "paddygblog@gmail.com";
                 position: absolute;
                 left: 3rem;
                 bottom: 120%;
-                transform: translateX(-50%);
                 white-space: nowrap;
-                font-size: 0.7rem;
+                font-size: 0.5rem;
                 z-index: 200;
                 transition: opacity 0.2s;
                 pointer-events: none;
+            }
+            .instagram-link {
+                font-size: 0.6rem;
+                color: #374151;
+                text-decoration: none;
+                cursor: pointer;
+                user-select: all;
+                display: inline-block;
             }
             .tooltip-parent.show-tooltip .footer-tooltip {
                 visibility: visible;
                 opacity: 1;
             }
             .footer p {
-                font-size: 0.4rem;
-                margin-right: 1rem;
+              font-size: 0.5rem;
+              margin-right: 1rem;
             }
         </style>
