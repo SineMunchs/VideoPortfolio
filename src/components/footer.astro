@@ -34,7 +34,7 @@ const email = "paddyblog@gmail.com";
     btn.addEventListener("mouseleave", () => btn.classList.remove("show-tooltip"));
     btn.addEventListener("click", async () => {
       try {
-        await navigator.clipboard.writeText(btn.dataset.copy);
+        await navigator.clipboard.writeText(btn.dataset.copy ?? "");
         btn.classList.add("show-tooltip");
         setTimeout(() => btn.classList.remove("show-tooltip"), 800);
       } catch (err) {
