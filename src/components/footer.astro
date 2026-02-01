@@ -1,106 +1,109 @@
 ---
-const email = "paddygblog@gmail.com";
+const email = "paddyblog@gmail.com";
 ---
 <footer class="footer">
-    <div class="icon-row">
-      <span class="tooltip-parent" id="copy-email" data-copy="paddyblog@gmail.com" style="cursor: pointer; user-select: all; color: #374151;">
-        paddyblog@gmail.com 
-        <span class="footer-tooltip">Email copied</span>
+  <div class="icon-row">
+    <span
+      class="tooltip-parent"
+      id="copy-email"
+      data-copy={email}
+      style="cursor: pointer; user-select: all; color: #374151;"
+    >
+      Email
+      <span class="footer-tooltip">Email copied</span>
     </span>
-       <p style="margin: 0 0.2rem 0 0; display: inline;"> / </p><a href="https://www.instagram.com/paddygomulski/" target="_blank" rel="noopener" aria-label="Instagram" class="tooltip-parent instagram-link" style="margin-left: 0;">
-                instagram
-            </a>
-    </div>
-    <p>© 2024 paddy Gomulski. All rights reserved.</p>
+    <span class="divider">/</span>
+    <a
+      href="https://www.instagram.com/paddygomulski/"
+      target="_blank"
+      rel="noopener"
+      aria-label="Instagram"
+      class="tooltip-parent instagram-link"
+    >
+      instagram
+    </a>
+  </div>
+  <p>© Paddy Gomulski. All rights reserved.</p>
 </footer>
 
 <script>
-    function setupCopy(id, tooltipText) {
-        const btn = document.getElementById(id);
-        btn?.addEventListener("mousedown", () => {
-            btn.classList.add("show-tooltip");
-        });
-        btn?.addEventListener("mouseup", () => {
-            setTimeout(() => {
-                btn.classList.remove("show-tooltip");
-            }, 400);
-        });
-        btn?.addEventListener("mouseleave", () => {
-            btn.classList.remove("show-tooltip");
-        });
-        btn?.addEventListener("click", async () => {
-            const value = btn.dataset.copy;
-            try {
-                await navigator.clipboard.writeText(value);
-                btn.classList.add("show-tooltip");
-                setTimeout(() => {
-                    btn.classList.remove("show-tooltip");
-                }, 800);
-                console.log(tooltipText + " copied to clipboard");
-            } catch (err) {
-                console.error("Failed to copy " + tooltipText, err);
-            }
-        });
-    }
-    setupCopy("copy-email", "Email");
+  const btn = document.getElementById("copy-email");
+  if (btn) {
+    btn.addEventListener("mousedown", () => btn.classList.add("show-tooltip"));
+    btn.addEventListener("mouseup", () => setTimeout(() => btn.classList.remove("show-tooltip"), 400));
+    btn.addEventListener("mouseleave", () => btn.classList.remove("show-tooltip"));
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy);
+        btn.classList.add("show-tooltip");
+        setTimeout(() => btn.classList.remove("show-tooltip"), 800);
+      } catch (err) {
+        console.error("Failed to copy email", err);
+      }
+    });
+  }
 </script>
 
 <style>
-    .footer {
-                position: fixed;
-                left: 0;
-                bottom: 0;
-                width: 100%;
-                padding-top: 1rem;
-                padding-bottom: 1rem;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                z-index: 100;
-                font-family: 'Helvetica', Arial, sans-serif;
-                font-size: 0.6rem;
-            }
-            .icon-row {
-                display: flex;
-                align-items: center;
-                gap: 0.3rem;
-                margin-left: 1rem;
-            }
-            /* Cleaned up unused icon styles */
-            .tooltip-parent {
-                position: relative;
-            }
-            .footer-tooltip {
-                visibility: hidden;
-                opacity: 0;
-                background: #ffffff;
-                color: #000000;
-                text-align: center;
-                border-radius: 4px;
-                padding: 0.2rem 0.6rem;
-                position: absolute;
-                left: 3rem;
-                bottom: 120%;
-                white-space: nowrap;
-                font-size: 0.5rem;
-                z-index: 200;
-                transition: opacity 0.2s;
-                pointer-events: none;
-            }
-            .instagram-link {
-                font-size: 0.6rem;
-                color: #374151;
-                text-decoration: none;
-                cursor: pointer;
-                user-select: all;
-                display: inline-block;
-            }
-            .tooltip-parent.show-tooltip .footer-tooltip {
-                visibility: visible;
-                opacity: 1;
-            }
-            .footer p {
-              font-size: 0.5rem;
-              margin-right: 1rem;
-            }
-        </style>
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 1.2rem 1.2rem; /* Match video margin (adjust 2.5rem as needed) */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+  font-family: 'Helvetica', Arial, sans-serif;
+  font-size: 0.6rem;
+  box-sizing: border-box;
+}
+.icon-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: 0; /* Remove extra left margin for alignment */
+}
+.tooltip-parent {
+  position: relative;
+}
+.footer-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  background: #fff;
+  color: #000;
+  text-align: center;
+  border-radius: 4px;
+  padding: 0.2rem 0.6rem;
+  position: absolute;
+  left: 3rem;
+  bottom: 120%;
+  white-space: nowrap;
+  font-size: 0.5rem;
+  z-index: 200;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.instagram-link {
+  font-size: 0.6rem;
+  color: #374151;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: all;
+  display: inline-block;
+}
+.tooltip-parent.show-tooltip .footer-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+.divider {
+  margin: 0 0.3rem;
+  display: inline;
+}
+.footer p {
+  font-size: 0.5rem;
+  margin-right: 0;
+}
+</style>

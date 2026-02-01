@@ -17,11 +17,25 @@ import Footer from '../components/footer.astro';
 
 <style>
     .pageTitle {
+        position: sticky;
+        top: 0;
         margin-top: 70px;
         font-family: var(--font);
         font-size: 8rem;
         font-weight: bold;
         text-align: right;
+        z-index: 0; /* Lower than Nav and WorkGrid */
+        background: transparent;
+        pointer-events: none; /* Prevent interaction */
     }
-   
+
+@media screen and (max-width: 468px) {
+    .pageTitle {
+        font-size: 1.5rem;
+        margin-top: 100px;
+        padding-right: 1rem;
+        text-align: right;
+    }
+    
+}
 </style>

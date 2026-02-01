@@ -8,46 +8,71 @@ import "../styles/global.css";
 <Layout>
   <Nav />
   <h1 class="pageTitle">Contact</h1>
-    <div class="contact-info">
-      <button type="button" class="information tooltip-parent" id="copy-email" data-copy="paddyblog@gmail.com">
+  <div class="contact-info">
+    <div class="contact-row">
+      <button
+        type="button"
+        class="information tooltip-parent"
+        id="copy-email"
+        data-copy="paddyblog@gmail.com"
+      >
         <span>paddyblog@gmail.com</span>
         <span class="footer-tooltip">Email copied</span>
       </button>
-      <button type="button" class="information tooltip-parent" id="copy-phone" data-copy="+44 7906 552 769">
+    </div>
+    <div class="contact-row">
+      <button
+        type="button"
+        class="information tooltip-parent"
+        id="copy-phone"
+        data-copy="+44 7906 552 769"
+      >
         <span>+44 7906 552 769</span>
         <span class="footer-tooltip">number copied</span>
       </button>
     </div>
+    <div class="contact-row">
+      <a
+        href="https://www.instagram.com/paddygomulski/"
+        target="_blank"
+        rel="noopener"
+        aria-label="Instagram"
+        class="tooltip-parent instagram-link"
+      >
+        instagram
+      </a>
+    </div>
+  </div>
   <Footer />
 </Layout>
 
-  <script>
-    function setupCopy(id, tooltipText) {
-      const btn = document.getElementById(id);
-      btn?.addEventListener("mousedown", () => {
-        btn.classList.add("show-tooltip");
-      });
-      btn?.addEventListener("mouseup", () => {
-        setTimeout(() => {
-          btn.classList.remove("show-tooltip");
-        }, 400);
-      });
-      btn?.addEventListener("mouseleave", () => {
+<script>
+  function setupCopy(id: string, tooltipText: string) {
+    const btn = document.getElementById(id);
+    btn?.addEventListener("mousedown", () => {
+      btn.classList.add("show-tooltip");
+    });
+    btn?.addEventListener("mouseup", () => {
+      setTimeout(() => {
         btn.classList.remove("show-tooltip");
-      });
-      btn?.addEventListener("click", async () => {
-        const value = btn.dataset.copy;
-        try {
-          await navigator.clipboard.writeText(value);
-          console.log(tooltipText + " copied to clipboard");
-        } catch (err) {
-          console.error("Failed to copy " + tooltipText, err);
-        }
-      });
-    }
-    setupCopy("copy-email", "Email");
-    setupCopy("copy-phone", "Phone");
-  </script>
+      }, 400);
+    });
+    btn?.addEventListener("mouseleave", () => {
+      btn.classList.remove("show-tooltip");
+    });
+    btn?.addEventListener("click", async () => {
+      const value = btn.dataset.copy;
+      try {
+        await navigator.clipboard.writeText(value);
+        console.log(tooltipText + " copied to clipboard");
+      } catch (err) {
+        console.error("Failed to copy " + tooltipText, err);
+      }
+    });
+  }
+  setupCopy("copy-email", "Email");
+  setupCopy("copy-phone", "Phone");
+</script>
 
 <style>
   html,
@@ -68,7 +93,13 @@ import "../styles/global.css";
     gap: 0.5rem;
     margin-bottom: 2rem;
   }
-  .information {
+  .contact-row {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+  .information,
+  .instagram-link {
     font-family: var(--font);
     font-size: 1rem;
     text-align: right;
@@ -79,6 +110,12 @@ import "../styles/global.css";
     padding: 0.2rem 0.6rem;
     margin: 0;
     color: inherit;
+  }
+  .instagram-link {
+    text-decoration: none;
+    user-select: all;
+    font-size: 1rem;
+    color: #374151;
   }
   .tooltip-parent {
     position: relative;
