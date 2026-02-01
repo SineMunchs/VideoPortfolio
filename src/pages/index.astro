@@ -19,11 +19,24 @@ import WorkGrid from '../components/workGrid.astro';
     font-family: var(--font);
   }
 
+
+
   .pageTitle {
+    position: sticky;
+    top: 0;
+    z-index: 0;
+    background: transparent;
     margin-top: 70px;
     font-family: var(--font);
     font-size: 8rem;
     font-weight: bold;
     text-align: right;
+  }
+
+  @media (max-width: 640px) {
+    .pageTitle {
+      font-size: 4rem;
+      margin-top: 30px;
+    }
   }
 </style>
