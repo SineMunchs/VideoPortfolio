@@ -11,8 +11,11 @@ const { title = 'paddy gomulski' } = Astro.props;
     <title>{title}</title>
     <script type="module" src="https://unpkg.com/@mux/mux-player@latest"></script>
     <link rel="icon" type="image/png" href="/paddy.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap" rel="stylesheet">
   </head>
-  <body>
+  <body class="font-sans">
     <main>
       <slot />
     </main>

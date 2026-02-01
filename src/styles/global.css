@@ -1,12 +1,16 @@
 
+
 :root {
   --page-pad-block: 1rem;
   --page-pad-inline: 1.25rem;
+  --font: "Sen", sans-serif;
+  --text: #6e6e6e;
 }
 
 body {
   background-color: #f9f9f9;
-  --font: "helvetica", helvetica, Arial, sans-serif;
+  font-family: var(--font);
+  color: var(--text);
   z-index: 50;
   margin: 0;
 }
