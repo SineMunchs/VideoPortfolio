@@ -22,5 +22,53 @@
     "year": "2025",
     "project": "salomon",
     "overlay": "@salomon_kr NO-LINE-PURPOSE—<br><br>-<br>Creative Production @oraefi.lab<br>Producer @bjarturnorthfjord<br>Director / Photographer @rory_griffs<br>DOP @paddygomulski<br>Assistant Isakernir<br>Models @arn_einars @sunnahardardottir<br>@ibrahim_kolbeinn<br>Sound Kári Siguroarson<br>Edit @annadownie_<br>Colourist @johnlaytoncolour"
-}
+  },
+  {
+    "id": "3",
+    "href": "/work/gp02",
+    "muxPlaybackId": "HIfsKf4sdfGgJ1X700xLXFIcMA3izQd301D01N9gM1fTto",
+    "poster": "/1.salomon.png",
+    "tag": "",
+    "role": "DOP",
+    "title": "Placeholder 01",
+    "year": "2026",
+    "project": "coming soon",
+    "overlay": "Placeholder project using an existing video stand-in until final assets are ready."
+  },
+  {
+    "id": "4",
+    "href": "/work/gp02",
+    "muxPlaybackId": "HIfsKf4sdfGgJ1X700xLXFIcMA3izQd301D01N9gM1fTto",
+    "poster": "/1.salomon.png",
+    "tag": "",
+    "role": "DOP",
+    "title": "Placeholder 02",
+    "year": "2026",
+    "project": "coming soon",
+    "overlay": "Placeholder project using an existing video stand-in until final assets are ready."
+  },
+  {
+    "id": "5",
+    "href": "/work/gp02",
+    "muxPlaybackId": "HIfsKf4sdfGgJ1X700xLXFIcMA3izQd301D01N9gM1fTto",
+    "poster": "/1.salomon.png",
+    "tag": "",
+    "role": "DOP",
+    "title": "Placeholder 03",
+    "year": "2026",
+    "project": "coming soon",
+    "overlay": "Placeholder project using an existing video stand-in until final assets are ready."
+  },
+  {
+    "id": "6",
+    "href": "/work/gp02",
+    "muxPlaybackId": "HIfsKf4sdfGgJ1X700xLXFIcMA3izQd301D01N9gM1fTto",
+    "poster": "/1.salomon.png",
+    "tag": "",
+    "role": "DOP",
+    "title": "Placeholder 04",
+    "year": "2026",
+    "project": "coming soon",
+    "overlay": "Placeholder project using an existing video stand-in until final assets are ready."
+  }
 ]
