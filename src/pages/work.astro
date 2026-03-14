@@ -10,12 +10,18 @@ import Footer from '../components/footer.astro';
 <Layout>
   <Nav />
   <!--<h1 class="pageTitle">work</h1> -->
-  <WorkGrid />
+ <div class="homeWorkGrid">
+    <WorkGrid />
+  </div>
   <Footer />
 </Layout>
 
 
 <style>
+
+      .homeWorkGrid {
+    padding-top: 9rem;
+  }
    /*  .pageTitle {
         position: sticky;
         top: 0;

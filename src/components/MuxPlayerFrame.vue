@@ -67,7 +67,7 @@ onBeforeUnmount(() => {
 <template>
   <mux-video
     ref="muxRef"
-    class="aspect-square w-full overflow-hidden md:aspect-video"
+    class="muxFrame"
     :playback-id="playbackId"
     :poster="poster"
     :autoplay="autoplay"
@@ -80,4 +80,11 @@ onBeforeUnmount(() => {
   />
 </template>
 
-
+<style scoped>
+  .muxFrame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+</style>

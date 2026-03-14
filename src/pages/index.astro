@@ -7,7 +7,9 @@ import Footer from '../components/footer.astro';
 
 <Layout>
   <Nav />
-  <WorkGrid />
+  <div class="homeWorkGrid">
+    <WorkGrid />
+  </div>
   <Footer />
 </Layout>
 
@@ -19,8 +21,12 @@ import Footer from '../components/footer.astro';
     z-index: 0;
     background: transparent;
     margin-top: 70px;
-    font-size: 8rem;
+    font-size: 20rem;
     font-weight: bold;
     text-align: right;
+  }
+
+  .homeWorkGrid {
+    padding-top: 9rem;
   }
 </style>

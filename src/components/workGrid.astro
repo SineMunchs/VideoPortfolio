@@ -1,6 +1,4 @@
 ---
-
-
 import items from "../data/work.json";
 import MuxPlayerFrame from "./MuxPlayerFrame.vue";
 
@@ -22,13 +20,11 @@ type WorkItem = {
 const workItems = items as WorkItem[];
 ---
 
-<!--  https://www.bittercreek.studio/projects/ghostpoet-oh-lord-->
-
-
+<!-- Work Grid -->
 <section class={`workRow${Astro.props.class ? ` ${Astro.props.class}` : ''}`} aria-label="Selected work">
   {workItems.map((item) => {
     const hasMux = Boolean(item.muxPlaybackId);
-    // If muxPlaybackId exists, always use Mux player, never fallback to local video
+
     return (
       <article
         class="workItem"
@@ -49,16 +45,16 @@ const workItems = items as WorkItem[];
       >
         <a class="media" href={item.href} aria-label={`Open ${item.project}`}>
           {hasMux ? (
-                      <MuxPlayerFrame
-                        playbackId={item.muxPlaybackId}
-                        poster={item.poster}
-                        autoplay={false}
-                        loop={false}
-                        muted={true}
-                        data-hover-play
-                        client:only="vue"
-                      />
-                    ) : (
+            <MuxPlayerFrame
+              playbackId={item.muxPlaybackId}
+              poster={item.poster}
+              autoplay={false}
+              loop={false}
+              muted={true}
+              data-hover-play
+              client:only="vue"
+            />
+          ) : (
             <video
               class="vid"
               muted
@@ -85,15 +81,16 @@ const workItems = items as WorkItem[];
     );
   })}
 </section>
+
 <style>
-/* Hide mux-player play button and control bar in grid */
+/* Grid Mux Controls */
 mux-player.no-controls::part(control-bar),
 mux-player.no-controls::part(play-button),
 mux-player.no-controls::part(center-play-button),
 mux-player.no-controls::part(top-play-button) {
   display: none !important;
 }
-/* Fallback: hide play button in shadow DOM for browsers that don't support ::part fully */
+
 mux-player.no-controls [part~="center-play-button"],
 mux-player.no-controls [part~="play-button"],
 mux-player.no-controls [part~="top-play-button"] {
@@ -101,6 +98,7 @@ mux-player.no-controls [part~="top-play-button"] {
 }
 </style>
 
+<!-- Project Overlay -->
 <div class="overlay" data-overlay aria-hidden="true">
   <div class="overlay-panel">
     <button
@@ -138,20 +136,19 @@ mux-player.no-controls [part~="top-play-button"] {
       <div class="overlay-meta">
         <div class="overlay-project" data-overlay-project></div>
         <div class="overlay-sub" data-overlay-sub></div>
-
         <div class="overlay-copy">
           <p data-overlay-description></p>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-
 <script is:inline>
   (() => {
+    // Overlay elements
     const overlay = document.querySelector("[data-overlay]");
     const closeBtn = overlay?.querySelector("[data-overlay-close]");
-    const tagEl = overlay?.querySelector("[data-overlay-tag]");
     const projectEl = overlay?.querySelector("[data-overlay-project]");
     const subEl = overlay?.querySelector("[data-overlay-sub]");
     const descriptionEl = overlay?.querySelector("[data-overlay-description]");
@@ -161,6 +158,7 @@ mux-player.no-controls [part~="top-play-button"] {
     const sourceEl = overlay?.querySelector("[data-overlay-source]");
     const webmSourceEl = overlay?.querySelector("[data-overlay-source-webm]");
 
+    // Player helpers
     const getActivePlayer = () => {
       if (muxEl && !muxEl.hasAttribute("hidden")) return muxEl;
       return nativeVideoEl;
@@ -194,6 +192,7 @@ mux-player.no-controls [part~="top-play-button"] {
       }
     };
 
+    // Overlay content sync
     const updateOverlay = (item) => {
       if (!overlay || !sourceEl) return;
 
@@ -209,11 +208,9 @@ mux-player.no-controls [part~="top-play-button"] {
       const playbackId = item.dataset.playbackId || "";
       const overlayText = item.dataset.overlayText || "";
 
-      if (tagEl) tagEl.textContent = tag;
       if (projectEl) projectEl.textContent = project || title;
-      if (subEl)
-        subEl.textContent = [role, title, year].filter(Boolean).join(" • ");
-  if (descriptionEl) descriptionEl.innerHTML = overlayText; // <-- changed
+      if (subEl) subEl.textContent = [role, title, year].filter(Boolean).join(" • ");
+      if (descriptionEl) descriptionEl.innerHTML = overlayText;
       if (linkEl) linkEl.href = href;
 
       if (playbackId) {
@@ -249,6 +246,7 @@ mux-player.no-controls [part~="top-play-button"] {
       }
     };
 
+    // Overlay open and close
     const openOverlay = (item) => {
       if (!overlay) return;
       updateOverlay(item);
@@ -269,6 +267,7 @@ mux-player.no-controls [part~="top-play-button"] {
       getMedia(muxEl)?.pause();
     };
 
+    // Overlay events
     closeBtn?.addEventListener("click", closeOverlay);
 
     overlay?.addEventListener("click", (e) => {
@@ -284,6 +283,7 @@ mux-player.no-controls [part~="top-play-button"] {
       openFullscreen();
     });
 
+    // Grid item interactions
     document.querySelectorAll(".workItem").forEach((item) => {
       const handleOpen = (e) => {
         if (e.type === "mousedown" && e.button !== 0) return;
@@ -301,35 +301,29 @@ mux-player.no-controls [part~="top-play-button"] {
       });
     });
 
+    // Hover preview playback
     document.querySelectorAll("[data-hover-play]").forEach((v) => {
-      // Apply hover/focus play logic to native video and mux-video/mux-player elements
-      const isNative = v.tagName === 'VIDEO';
-      const isMux = v.tagName === 'MUX-VIDEO' || v.tagName === 'MUX-PLAYER';
-      if (!isNative && !isMux) return;
+      const isPlayable =
+        v.tagName === "VIDEO" || v.tagName === "MUX-VIDEO" || v.tagName === "MUX-PLAYER";
+
+      if (!isPlayable) return;
+
       const play = async () => {
         try {
-          if (isNative) {
-            v.muted = true;
-            v.currentTime = 0;
-            await v.play();
-          } else if (isMux) {
-            v.muted = true;
-            v.currentTime = 0;
-            await v.play();
-          }
+          v.muted = true;
+          v.currentTime = 0;
+          await v.play();
         } catch {}
       };
+
       const stop = () => {
-        if (isNative) {
-          v.pause();
-          v.currentTime = 0;
-        } else if (isMux) {
-          v.pause();
-          v.currentTime = 0;
-        }
+        v.pause();
+        v.currentTime = 0;
       };
+
       const wrap = v.closest("a");
       const targets = [v, wrap].filter(Boolean);
+
       targets.forEach((t) => {
         t.addEventListener("mouseenter", play);
         t.addEventListener("mouseleave", stop);
@@ -341,13 +335,12 @@ mux-player.no-controls [part~="top-play-button"] {
 </script>
 
 <style>
+  /* Shared Variables */
   :root {
     --line: #e6e6e6;
-
-    --gutter: 10px;
-    --section-mt: 5rem;
   }
 
+  /* Grid Layout */
   .workRow {
     font-family: var(--font);
     color: var(--text);
@@ -363,6 +356,7 @@ mux-player.no-controls [part~="top-play-button"] {
     margin-bottom: 100px;
   }
 
+  /* Card Media */
   .media {
     position: relative;
     display: block;
@@ -383,25 +377,23 @@ mux-player.no-controls [part~="top-play-button"] {
 
   .watch {
     position: absolute;
-    top: 0px;
+    top: 0;
     left: 10px;
-
     font-size: 22px;
     text-transform: lowercase;
     letter-spacing: 0.01em;
-
     color: #fff;
     mix-blend-mode: difference;
     pointer-events: none;
   }
 
+  /* Card Metadata */
   .metaGrid {
     display: grid;
     grid-template-columns: 1fr 1.6fr 0.8fr;
     gap: 18px;
     align-items: start;
     border-top: 1px solid var(--line);
-
     font-size: 12px;
     letter-spacing: 0.01em;
   }
@@ -438,10 +430,10 @@ mux-player.no-controls [part~="top-play-button"] {
     outline-offset: 3px;
   }
 
+  /* Grid Responsive */
   @media (max-width: 900px) {
     .workRow {
       grid-template-columns: 1fr;
-      gap: 40px;
     }
 
     .workItem + .workItem {
@@ -473,6 +465,7 @@ mux-player.no-controls [part~="top-play-button"] {
     }
   }
 
+  /* Overlay Shell */
   .overlay {
     position: fixed;
     inset: 0;
@@ -509,6 +502,7 @@ mux-player.no-controls [part~="top-play-button"] {
     transform: translateX(0);
   }
 
+  /* Overlay Content */
   .overlay-close {
     position: absolute;
     top: 16px;
@@ -530,6 +524,13 @@ mux-player.no-controls [part~="top-play-button"] {
     align-items: start;
   }
 
+  .overlay-media {
+    display: grid;
+    gap: 12px;
+    position: sticky;
+    top: 16px;
+  }
+
   .overlay-meta {
     display: grid;
     gap: 10px;
@@ -547,13 +548,6 @@ mux-player.no-controls [part~="top-play-button"] {
     letter-spacing: 0.01em;
     line-height: 1.3;
     opacity: 0.8;
-  }
-
-  .overlay-media {
-    display: grid;
-    gap: 12px;
-    position: sticky;
-    top: 16px;
   }
 
   .overlay-video {
@@ -584,6 +578,7 @@ mux-player.no-controls [part~="top-play-button"] {
     margin: 0;
   }
 
+  /* Overlay Responsive */
   @media (max-width: 900px) {
     .overlay-body {
       grid-template-columns: 1fr;

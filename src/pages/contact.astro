@@ -2,7 +2,6 @@
 import Nav from "../components/nav.astro";
 import Layout from "../layouts/Layout.astro";
 import Footer from "../components/footer.astro";
-import "../styles/global.css";
 ---
 
 <Layout>
@@ -47,45 +46,53 @@ import "../styles/global.css";
 </Layout>
 
 <script>
-  function setupCopy(id: string, tooltipText: string) {
-    const btn = document.getElementById(id);
-    btn?.addEventListener("mousedown", () => {
-      btn.classList.add("show-tooltip");
+  function setupCopy(id) {
+    const button = document.getElementById(id);
+    if (!button) return;
+
+    const hideTooltip = () => button.classList.remove("show-tooltip");
+
+    button.addEventListener("mousedown", () => {
+      button.classList.add("show-tooltip");
     });
-    btn?.addEventListener("mouseup", () => {
-      setTimeout(() => {
-        btn.classList.remove("show-tooltip");
-      }, 400);
+
+    button.addEventListener("mouseup", () => {
+      window.setTimeout(hideTooltip, 400);
     });
-    btn?.addEventListener("mouseleave", () => {
-      btn.classList.remove("show-tooltip");
-    });
-    btn?.addEventListener("click", async () => {
-      const value = btn.dataset.copy;
+
+    button.addEventListener("mouseleave", hideTooltip);
+
+    button.addEventListener("click", async () => {
+      const value = button.dataset.copy;
+      if (!value) return;
+
       try {
         await navigator.clipboard.writeText(value);
-        console.log(tooltipText + " copied to clipboard");
-      } catch (err) {
-        console.error("Failed to copy " + tooltipText, err);
+      } catch (error) {
+        console.error("Failed to copy value", error);
       }
     });
   }
-  setupCopy("copy-email", "Email");
-  setupCopy("copy-phone", "Phone");
+
+  setupCopy("copy-email");
+  setupCopy("copy-phone");
 </script>
 
 <style>
-  html,
-  body {
-    font-family: var(--font);
+  :root {
+    --contact-tooltip-bg: #fff;
+    --contact-tooltip-text: #000;
+    --contact-title: #121212;
   }
+
   .pageTitle {
     margin-top: 70px;
-    font-family: var(--font);
-    font-size: 5rem;
+    font-size: 2rem;
     font-weight: bold;
     text-align: right;
+    color: var(--contact-title);
   }
+
   .contact-info {
     display: flex;
     flex-direction: column;
@@ -93,52 +100,55 @@ import "../styles/global.css";
     gap: 0.5rem;
     margin-bottom: 2rem;
   }
+
   .contact-row {
     display: flex;
     justify-content: flex-end;
     width: 100%;
   }
-  .information,
-  .instagram-link {
-    font-family: var(--font);
-    font-size: 1rem;
-    text-align: right;
-    background: none;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    padding: 0.2rem 0.6rem;
-    margin: 0;
-    color: inherit;
-  }
-  .instagram-link {
-    text-decoration: none;
-    user-select: all;
-    font-size: 1rem;
-    color: inherit;
-  }
+
   .tooltip-parent {
     position: relative;
   }
-  .footer-tooltip {
-    visibility: hidden;
-    opacity: 0;
-    background: #ffffff;
-    color: #000000;
-    text-align: center;
-    border-radius: 4px;
+
+  .information,
+  .instagram-link {
+    position: relative;
+    margin: 0;
     padding: 0.2rem 0.6rem;
+    border: none;
+    background: none;
+    font-size: 1rem;
+    text-align: right;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .instagram-link {
+    text-decoration: none;
+    user-select: all;
+  }
+
+  .footer-tooltip {
     position: absolute;
     right: 100%;
     top: 50%;
-    transform: translateY(-50%);
-    white-space: nowrap;
-    font-size: 0.7rem;
-    z-index: 200;
-    transition: opacity 0.2s;
-    pointer-events: none;
     margin-right: 0.5rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: var(--contact-tooltip-bg);
+    color: var(--contact-tooltip-text);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: opacity 0.2s;
+    z-index: 200;
   }
+
   .tooltip-parent.show-tooltip .footer-tooltip {
     visibility: visible;
     opacity: 1;
