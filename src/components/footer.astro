@@ -7,7 +7,7 @@ const email = "paddyblog@gmail.com";
       class="tooltip-parent"
       id="copy-email"
       data-copy={email}
-      style="cursor: pointer; user-select: all; color: #374151;"
+      style="cursor: pointer; user-select: all;"
     >
       Email
       <span class="footer-tooltip">Email copied</span>
@@ -59,6 +59,8 @@ const email = "paddyblog@gmail.com";
   font-family: var(--font);
   font-size: 0.6rem;
   box-sizing: border-box;
+  color: #fff;
+  mix-blend-mode: difference;
 }
 .icon-row {
   display: flex;
@@ -88,7 +90,7 @@ const email = "paddyblog@gmail.com";
 }
 .instagram-link {
   font-size: 0.6rem;
-  color: #374151;
+  color: inherit;
   text-decoration: none;
   cursor: pointer;
   user-select: all;
