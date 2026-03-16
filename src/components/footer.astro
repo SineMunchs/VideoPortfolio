@@ -3,22 +3,22 @@ const email = "paddyblog@gmail.com";
 ---
 <footer class="footer">
   <div class="icon-row">
-    <span
-      class="tooltip-parent"
+    <button
+      type="button"
+      class="footer-action tooltip-parent"
       id="copy-email"
       data-copy={email}
-      style="cursor: pointer; user-select: all;"
     >
       Email
       <span class="footer-tooltip">Email copied</span>
-    </span>
+    </button>
     <span class="divider">/</span>
     <a
       href="https://www.instagram.com/paddygomulski/"
       target="_blank"
       rel="noopener"
       aria-label="Instagram"
-      class="tooltip-parent instagram-link"
+      class="footer-action instagram-link"
     >
       instagram
     </a>
@@ -30,13 +30,13 @@ const email = "paddyblog@gmail.com";
   const btn = document.getElementById("copy-email");
   if (btn) {
     btn.addEventListener("mousedown", () => btn.classList.add("show-tooltip"));
-    btn.addEventListener("mouseup", () => setTimeout(() => btn.classList.remove("show-tooltip"), 400));
+    btn.addEventListener("mouseup", () => {
+      setTimeout(() => btn.classList.remove("show-tooltip"), 400);
+    });
     btn.addEventListener("mouseleave", () => btn.classList.remove("show-tooltip"));
     btn.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(btn.dataset.copy ?? "");
-        btn.classList.add("show-tooltip");
-        setTimeout(() => btn.classList.remove("show-tooltip"), 800);
       } catch (err) {
         console.error("Failed to copy email", err);
       }
@@ -68,9 +68,26 @@ const email = "paddyblog@gmail.com";
   gap: 0.3rem;
   margin-left: 0; /* Remove extra left margin for alignment */
 }
+
 .tooltip-parent {
   position: relative;
 }
+
+.footer-action,
+.instagram-link {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-decoration: none;
+  text-transform: lowercase;
+  user-select: all;
+}
+
 .footer-tooltip {
   visibility: hidden;
   opacity: 0;
@@ -88,14 +105,7 @@ const email = "paddyblog@gmail.com";
   transition: opacity 0.2s;
   pointer-events: none;
 }
-.instagram-link {
-  font-size: 0.6rem;
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  user-select: all;
-  display: inline-block;
-}
+
 .tooltip-parent.show-tooltip .footer-tooltip {
   visibility: visible;
   opacity: 1;

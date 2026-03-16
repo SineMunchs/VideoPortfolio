@@ -4,7 +4,7 @@
 :root {
   --page-pad-block: 1rem;
   --page-pad-inline: 1.25rem;
-  --font: "Sen", sans-serif;
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --text: #6e6e6e;
 }
 
