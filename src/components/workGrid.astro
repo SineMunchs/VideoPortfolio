@@ -71,12 +71,12 @@ const workItems = items as WorkItem[];
           <span class="watch">{item.tag ?? "watch"}</span>
         </a>
         <div class="metaGrid" aria-label="Project metadata">
-          <div class="meta">{item.role}</div>
           <div class="meta metaInline">
-            <span>{item.title}</span>
+            <span>{item.role}</span>
+            {item.title && <span>{item.title}</span>}
             <span class="metaYear">{item.year}</span>
+            <span class="project">{item.project}</span>
           </div>
-          <div class="meta project">{item.project}</div>
         </div>
       </article>
     );
@@ -156,11 +156,9 @@ mux-player.no-controls [part~="top-play-button"] {
 
   /* Card Metadata */
   .metaGrid {
-    display: grid;
-    grid-template-columns: 1fr 1.6fr 0.8fr;
-    gap: 18px;
-    align-items: start;
+    display: block;
     border-top: 1px solid var(--line);
+    padding-top: 8px;
     font-size: 14px;
     letter-spacing: 0.01em;
   }
@@ -172,7 +170,8 @@ mux-player.no-controls [part~="top-play-button"] {
   .metaInline {
     display: flex;
     align-items: baseline;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 8px 12px;
   }
 
   .metaYear {
@@ -182,14 +181,9 @@ mux-player.no-controls [part~="top-play-button"] {
 
   .project {
     font-size: 15px;
-    margin-top: -3px;
     font-weight: 600;
     letter-spacing: 0.04em;
-    text-align: right;
-    justify-self: end;
-    align-self: start;
-    width: 100%;
-    padding-right: 0;
+    text-transform: uppercase;
   }
 
   .media:focus-visible {
@@ -208,16 +202,7 @@ mux-player.no-controls [part~="top-play-button"] {
     }
 
     .metaGrid {
-      grid-template-columns: auto auto auto;
-      gap: 12px;
-      align-items: center;
       font-size: 14px;
-      white-space: nowrap;
-    }
-
-    .project {
-      justify-self: start;
-      transform: translateX(-6px);
     }
 
     .watch {
