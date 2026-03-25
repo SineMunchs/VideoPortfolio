@@ -72,10 +72,10 @@ const workItems = items as WorkItem[];
         </a>
         <div class="metaGrid" aria-label="Project metadata">
           <div class="meta metaInline">
-            <span>{item.role}</span>
+            <span class="project">{item.project}</span>
+            <span class="metaRole">{item.role}</span>
             {item.title && <span>{item.title}</span>}
             <span class="metaYear">{item.year}</span>
-            <span class="project">{item.project}</span>
           </div>
         </div>
       </article>
@@ -172,6 +172,10 @@ mux-player.no-controls [part~="top-play-button"] {
     align-items: baseline;
     flex-wrap: wrap;
     gap: 8px 12px;
+  }
+
+  .metaRole {
+    white-space: nowrap;
   }
 
   .metaYear {
