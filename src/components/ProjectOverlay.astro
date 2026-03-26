@@ -12,30 +12,20 @@
 
     <div class="overlay-body">
       <div class="overlay-media">
-        <mux-player
-          class="overlay-video overlay-mux"
-          data-overlay-mux
-          muted
-          autoplay
-          hidden
-        ></mux-player>
-        <video
-          class="overlay-video overlay-native"
-          playsinline
-          controls
-          muted
-          autoplay
-          data-overlay-video
-        >
-          <source data-overlay-source-webm type="video/webm" />
-          <source data-overlay-source type="video/mp4" />
-        </video>
+        <div class="overlay-sticky-video">
+          <mux-player
+            class="overlay-video overlay-mux"
+            data-overlay-mux
+            muted
+            autoplay
+            hidden
+          ></mux-player>
+        </div>
         <a class="overlay-link" href="#" data-overlay-link>open project</a>
-      </div>
-
-      <div class="overlay-meta">
-        <div class="overlay-project" data-overlay-project></div>
-        <div class="overlay-sub" data-overlay-sub></div>
+        <div class="overlay-meta">
+          <div class="overlay-project" data-overlay-project></div>
+          <div class="overlay-sub" data-overlay-sub></div>
+        </div>
         <div class="overlay-copy">
           <p data-overlay-description></p>
         </div>
@@ -54,15 +44,9 @@
     const descriptionEl = overlay?.querySelector("[data-overlay-description]");
     const linkEl = overlay?.querySelector("[data-overlay-link]");
     const muxEl = overlay?.querySelector("[data-overlay-mux]");
-    const nativeVideoEl = overlay?.querySelector("[data-overlay-video]");
-    const sourceEl = overlay?.querySelector("[data-overlay-source]");
-    const webmSourceEl = overlay?.querySelector("[data-overlay-source-webm]");
 
     // Player helpers
-    const getActivePlayer = () => {
-      if (muxEl && !muxEl.hasAttribute("hidden")) return muxEl;
-      return nativeVideoEl;
-    };
+    const getActivePlayer = () => muxEl;
 
     const getMedia = (el) => {
       if (!el) return null;
@@ -95,7 +79,7 @@
 
     // Overlay content sync
     const updateOverlay = (item) => {
-      if (!overlay || !sourceEl) return;
+      if (!overlay) return;
 
       const project = item.dataset.project || "";
       const role = item.dataset.role || "";
@@ -103,8 +87,6 @@
       const title = item.dataset.title || "";
       const href = item.dataset.href || "#";
       const poster = item.dataset.poster || "";
-      const video = item.dataset.video || "";
-      const videoWebm = item.dataset.videoWebm || "";
       const playbackId = item.dataset.playbackId || "";
       const overlayText = item.dataset.overlayText || "";
 
@@ -113,39 +95,19 @@
       if (descriptionEl) descriptionEl.innerHTML = overlayText;
       if (linkEl) linkEl.href = href;
 
-      if (playbackId) {
-        if (muxEl) {
-          muxEl.removeAttribute("hidden");
-          muxEl.setAttribute("playback-id", playbackId);
-
-          if (poster) {
-            muxEl.setAttribute("poster", poster);
-          } else {
-            muxEl.removeAttribute("poster");
-          }
-        }
-
-        nativeVideoEl?.setAttribute("hidden", "true");
-      } else {
-        muxEl?.setAttribute("hidden", "true");
+      if (playbackId && muxEl) {
+        muxEl.removeAttribute("hidden");
+        muxEl.setAttribute("playback-id", playbackId);
 
         if (poster) {
-          nativeVideoEl?.setAttribute("poster", poster);
+          muxEl.setAttribute("poster", poster);
         } else {
-          nativeVideoEl?.removeAttribute("poster");
+          muxEl.removeAttribute("poster");
         }
-
-        if (webmSourceEl) {
-          if (videoWebm) {
-            webmSourceEl.src = videoWebm;
-          } else {
-            webmSourceEl.removeAttribute("src");
-          }
-        }
-
-        sourceEl.src = video;
-        nativeVideoEl?.removeAttribute("hidden");
-        nativeVideoEl?.load();
+      } else if (muxEl) {
+        muxEl.setAttribute("hidden", "true");
+        muxEl.removeAttribute("playback-id");
+        muxEl.removeAttribute("poster");
       }
     };
 
@@ -169,7 +131,6 @@
 
       overlay.classList.remove("is-open");
       overlay.setAttribute("aria-hidden", "true");
-      getMedia(nativeVideoEl)?.pause();
       getMedia(muxEl)?.pause();
     };
 
@@ -264,10 +225,11 @@
 
   .overlay-panel {
     position: relative;
-    width: min(720px, 95vw);
+    width: min(900px, 98vw);
     height: 100%;
-    padding: 32px 28px 40px;
-    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 10git stapx 28px 40px;
+    overflow: hidden;
     background: #f8f8f8;
     color: #434242;
     font-family: var(--font);
@@ -283,30 +245,47 @@
   /* Overlay Content */
   .overlay-close {
     position: absolute;
-    top: 16px;
-    right: 16px;
+    top: 12px;
+    right: 20px;
     border: 0;
     background: none;
     color: inherit;
     cursor: pointer;
+    border-bottom: 1px solid transparent;
     font-size: 14px;
     letter-spacing: 0.01em;
     text-transform: lowercase;
+    transition: border-color 160ms ease;
+  }
+
+  .overlay-close:hover,
+  .overlay-close:focus-visible,
+  .overlay-link:hover,
+  .overlay-link:focus-visible {
+    border-bottom-color: currentColor;
   }
 
   .overlay-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 12px;
-    align-items: start;
+    display: block;
+    margin-top: 20px;
+    height: calc(100% - 20px);
+    overflow: hidden;
   }
 
   .overlay-media {
+    display: grid;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 12px;
+    height: 100%;
+    min-height: 0;
+    width: 100%;
+  }
+
+  .overlay-sticky-video {
     position: sticky;
     top: 16px;
-    display: grid;
-    gap: 12px;
+    z-index: 1;
+    background: #f8f8f8;
   }
 
   .overlay-meta {
@@ -332,28 +311,36 @@
   }
 
   .overlay-video {
+    display: block;
     width: 100%;
+    max-width: 100%;
     border: 1px solid #e6e6e6;
     background: #000;
   }
 
   .overlay-link {
     width: fit-content;
-    border-bottom: 1px solid currentColor;
+    justify-self: end;
+    border-bottom: 1px solid transparent;
+    margin-top: 16px;
+    margin-bottom: 8px;
     color: inherit;
     font-size: 12px;
     letter-spacing: 0.01em;
     text-decoration: none;
     text-transform: lowercase;
+    transition: border-color 160ms ease;
   }
 
   .overlay-copy {
     display: grid;
-    gap: 12px;
+    gap: 20px;
     font-size: 14px;
     letter-spacing: 0.01em;
     line-height: 1.45;
-    margin-top: 10px;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
   }
 
   .overlay-copy p {
@@ -362,11 +349,7 @@
 
   /* Overlay Responsive */
   @media (max-width: 900px) {
-    .overlay-body {
-      grid-template-columns: 1fr;
-    }
-
-    .overlay-media {
+    .overlay-sticky-video {
       position: static;
     }
 
