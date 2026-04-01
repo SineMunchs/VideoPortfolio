@@ -10,6 +10,7 @@ type WorkItem = {
   videoSrc: string;
   videoWebm?: string;
   muxPlaybackId?: string;
+  orientation?: "landscape" | "portrait";
   tag?: string;
   role: string;
   title: string;
@@ -41,41 +42,44 @@ const workItems = items as WorkItem[];
         data-video-webm={item.videoWebm ?? ""}
         data-poster={item.poster}
         data-playback-id={item.muxPlaybackId ?? ""}
+        data-orientation={item.orientation ?? "landscape"}
         data-href={item.href}
         data-overlay-text={item.overlay ?? ""}
       >
-        <a class="media" href={item.href} aria-label={`Open ${item.project}`}>
-          {hasMux ? (
-            <MuxPlayerFrame
-              playbackId={item.muxPlaybackId}
-              poster={item.poster}
-              autoplay={false}
-              loop={false}
-              muted={true}
-              data-hover-play
-              client:only="vue"
-            />
-          ) : (
-            <video
-              class="vid"
-              muted
-              playsinline
-              preload="metadata"
-              poster={item.poster}
-              data-hover-play
-            >
-              {item.videoWebm && <source src={item.videoWebm} type="video/webm" />}
-              <source src={item.videoSrc} type="video/mp4" />
-            </video>
-          )}
-          <span class="watch">{item.tag ?? "watch"}</span>
-        </a>
-        <div class="metaGrid" aria-label="Project metadata">
-          <div class="meta metaInline">
-            <span class="project">{item.project}</span>
-            <span class="metaRole">{item.role}</span>
-            {item.title && <span>{item.title}</span>}
-            <span class="metaYear">{item.year}</span>
+        <div class="cardBody">
+          <a class="media" href={item.href} aria-label={`Open ${item.project}`}>
+            {hasMux ? (
+              <MuxPlayerFrame
+                playbackId={item.muxPlaybackId}
+                poster={item.poster}
+                autoplay={false}
+                loop={false}
+                muted={true}
+                data-hover-play
+                client:only="vue"
+              />
+            ) : (
+              <video
+                class="vid"
+                muted
+                playsinline
+                preload="metadata"
+                poster={item.poster}
+                data-hover-play
+              >
+                {item.videoWebm && <source src={item.videoWebm} type="video/webm" />}
+                <source src={item.videoSrc} type="video/mp4" />
+              </video>
+            )}
+            <span class="watch">{item.tag ?? "watch"}</span>
+          </a>
+          <div class="metaGrid" aria-label="Project metadata">
+            <div class="meta metaInline">
+              <span class="project">{item.project}</span>
+              <span class="metaRole">{item.role}</span>
+              {item.title && <span>{item.title}</span>}
+              <span class="metaYear">{item.year}</span>
+            </div>
           </div>
         </div>
       </article>
@@ -123,6 +127,10 @@ mux-player.no-controls [part~="top-play-button"] {
     margin-bottom: 100px;
   }
 
+  .cardBody {
+    display: block;
+  }
+
   /* Card Media */
   .media {
     position: relative;
@@ -133,6 +141,32 @@ mux-player.no-controls [part~="top-play-button"] {
     text-decoration: none;
   }
 
+  .workItem[data-orientation="portrait"] .cardBody {
+    width: 91%;
+    margin-inline: auto;
+  }
+
+  .workItem[data-orientation="portrait"] .media {
+    aspect-ratio: 9 / 16;
+  }
+
+  .workItem[data-orientation="portrait"] .metaGrid {
+    width: 100%;
+    text-align: left;
+  }
+
+  @media (min-width: 901px) {
+    .workItem[data-orientation="portrait"] .cardBody {
+      width: fit-content;
+      max-width: 91%;
+    }
+
+    .workItem[data-orientation="portrait"] .media {
+      height: min(78vh, 820px);
+      width: auto;
+    }
+  }
+
   .vid {
     width: 100%;
     height: 100%;
@@ -140,6 +174,16 @@ mux-player.no-controls [part~="top-play-button"] {
     display: block;
     transform: scale(1);
     transition: transform 200ms ease;
+  }
+
+  .workItem[data-orientation="portrait"] .vid {
+    object-fit: contain;
+    background: #000;
+  }
+
+  :global(.workItem[data-orientation="portrait"] .muxFrame) {
+    --media-object-fit: contain !important;
+    background: #000;
   }
 
   .watch {
@@ -157,7 +201,6 @@ mux-player.no-controls [part~="top-play-button"] {
   /* Card Metadata */
   .metaGrid {
     display: block;
-    border-top: 1px solid var(--line);
     padding-top: 8px;
     font-size: 14px;
     letter-spacing: 0.01em;
