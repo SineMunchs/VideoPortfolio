@@ -25,26 +25,61 @@ defineExpose({
   set muted(val) { if (muxRef.value) muxRef.value.muted = val; },
 });
 
-// Hover/focus play/stop logic
+// Hover on desktop, visibility-based autoplay on phones/tablets.
+const isPhoneView = () =>
+  window.matchMedia("(hover: none), (pointer: coarse), (max-width: 900px)").matches;
+
 let wrap: HTMLElement | null = null;
+let observer: IntersectionObserver | null = null;
+const pauseOtherMobileMedia = (activeElement: Element) => {
+  document.querySelectorAll("video, mux-video, mux-player").forEach((candidate) => {
+    if (candidate === activeElement) return;
+    const media = candidate as HTMLMediaElement & { pause?: () => void };
+    if (typeof media.pause === "function") {
+      try {
+        media.pause();
+      } catch {}
+    }
+  });
+};
+
 const play = async () => {
-  if (muxRef.value) {
-    showPoster.value = false;
-    muxRef.value.muted = true;
-    muxRef.value.currentTime = 0;
-    try { await muxRef.value.play(); } catch {}
-  }
+  if (!muxRef.value) return;
+  if (isPhoneView()) pauseOtherMobileMedia(muxRef.value as Element);
+  showPoster.value = false;
+  muxRef.value.muted = true;
+  muxRef.value.playsInline = true;
+  try {
+    await muxRef.value.play();
+  } catch {}
 };
+
+
 const stop = () => {
-  if (muxRef.value) {
-    muxRef.value.pause();
-    muxRef.value.currentTime = 0;
-    showPoster.value = Boolean(props.poster);
-  }
+  if (!muxRef.value) return;
+  muxRef.value.pause();
+  showPoster.value = Boolean(props.poster);
 };
+
 onMounted(() => {
   if (!muxRef.value) return;
   muxRef.value.addEventListener('ended', stop);
+  muxRef.value.pause();
+  showPoster.value = Boolean(props.poster);
+
+  if (isPhoneView()) {
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) play();
+          else stop();
+        });
+      },
+      { threshold: [0, 0.6, 1] }
+    );
+    observer.observe(muxRef.value);
+    return;
+  }
 
   // Find closest anchor for accessibility
   wrap = muxRef.value.closest('a');
@@ -56,7 +91,13 @@ onMounted(() => {
     t.addEventListener('focusout', stop);
   });
 });
+
 onBeforeUnmount(() => {
+  if (observer) {
+    observer.disconnect();
+    observer = null;
+  }
+
   if (!muxRef.value) return;
   muxRef.value.removeEventListener('ended', stop);
 
@@ -67,6 +108,8 @@ onBeforeUnmount(() => {
     t.removeEventListener('focusin', play);
     t.removeEventListener('focusout', stop);
   });
+
+  wrap = null;
 });
 </script>
 

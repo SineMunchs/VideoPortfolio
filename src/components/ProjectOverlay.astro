@@ -172,6 +172,18 @@
     });
 
     // Hover preview playback
+    const isPhoneView = window.matchMedia("(hover: none), (pointer: coarse), (max-width: 900px)").matches;
+    const pauseOtherMobileMedia = (activeElement) => {
+      document.querySelectorAll("video, mux-video, mux-player").forEach((candidate) => {
+        if (candidate === activeElement) return;
+        if (typeof candidate.pause === "function") {
+          try {
+            candidate.pause();
+          } catch {}
+        }
+      });
+    };
+
     document.querySelectorAll("[data-hover-play]").forEach((element) => {
       const isPlayable =
         element.tagName === "VIDEO" ||
@@ -182,16 +194,30 @@
 
       const play = async () => {
         try {
+          if (isPhoneView) pauseOtherMobileMedia(element);
           element.muted = true;
-          element.currentTime = 0;
+          element.playsInline = true;
           await element.play();
         } catch {}
       };
 
       const stop = () => {
         element.pause();
-        element.currentTime = 0;
       };
+
+      if (isPhoneView) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting && entry.intersectionRatio >= 0.6) play();
+              else stop();
+            });
+          },
+          { threshold: [0, 0.6, 1] }
+        );
+        observer.observe(element);
+        return;
+      }
 
       const wrap = element.closest("a");
       const targets = [element, wrap].filter(Boolean);
