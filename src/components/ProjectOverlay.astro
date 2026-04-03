@@ -273,15 +273,15 @@
 
   /* Overlay Content */
   .overlay-close {
-    position: absolute;
-    top: 10px;
+    position: left;
+    top: 8px;
     right: 20px;
     border: 0;
     background: none;
     color: inherit;
     cursor: pointer;
     border-bottom: 1px solid transparent;
-    font-size: 14px;
+    font-size: 12px;
     letter-spacing: 0.01em;
     text-transform: lowercase;
     transition: border-color 160ms ease;
@@ -296,7 +296,6 @@
 
   .overlay-body {
     display: block;
-    margin-top: 28px;           /* was 64px */
     height: calc(100% - 28px);  /* keep in sync */
     overflow: hidden;
   }
@@ -410,6 +409,24 @@
 
   /* Overlay Responsive */
   @media (max-width: 900px) {
+    .overlay-close {
+      top: 4px;
+    }
+
+    .overlay-body {
+      margin-top: 8px;
+      height: calc(100% - 16px);
+    }
+
+    .overlay-media {
+      gap: 8px;
+    }
+
+    .overlay-link {
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+
     .overlay-sticky-video {
       position: static;
     }
