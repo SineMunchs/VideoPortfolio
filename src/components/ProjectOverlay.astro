@@ -20,6 +20,16 @@
             autoplay
             hidden
           ></mux-player>
+          <video
+            class="overlay-video overlay-local"
+            data-overlay-video
+            muted
+            autoplay
+            playsinline
+            loop
+            hidden
+            preload="metadata"
+          ></video>
         </div>
         <a class="overlay-link" href="#" data-overlay-link>open project</a>
         <div class="overlay-meta">
@@ -44,9 +54,14 @@
     const descriptionEl = overlay?.querySelector("[data-overlay-description]");
     const linkEl = overlay?.querySelector("[data-overlay-link]");
     const muxEl = overlay?.querySelector("[data-overlay-mux]");
+    const localVideoEl = overlay?.querySelector("[data-overlay-video]");
 
     // Player helpers
-    const getActivePlayer = () => muxEl;
+    const getActivePlayer = () => {
+      if (muxEl && !muxEl.hasAttribute("hidden")) return muxEl;
+      if (localVideoEl && !localVideoEl.hasAttribute("hidden")) return localVideoEl;
+      return null;
+    };
 
     const getMedia = (el) => {
       if (!el) return null;
@@ -88,6 +103,8 @@
       const href = item.dataset.href || "#";
       const poster = item.dataset.poster || "";
       const playbackId = item.dataset.playbackId || "";
+      const videoSrc = item.dataset.video || "";
+      const videoWebm = item.dataset.videoWebm || "";
       const overlayText = item.dataset.overlayText || "";
       const orientation = item.dataset.orientation || "landscape";
 
@@ -107,10 +124,47 @@
         } else {
           muxEl.removeAttribute("poster");
         }
-      } else if (muxEl) {
-        muxEl.setAttribute("hidden", "true");
-        muxEl.removeAttribute("playback-id");
-        muxEl.removeAttribute("poster");
+        if (localVideoEl) {
+          localVideoEl.pause();
+          localVideoEl.setAttribute("hidden", "true");
+          localVideoEl.removeAttribute("poster");
+          localVideoEl.removeAttribute("src");
+          localVideoEl.innerHTML = "";
+        }
+      } else if (videoSrc && localVideoEl) {
+        if (muxEl) {
+          muxEl.setAttribute("hidden", "true");
+          muxEl.removeAttribute("playback-id");
+          muxEl.removeAttribute("poster");
+        }
+
+        localVideoEl.removeAttribute("hidden");
+        if (poster) {
+          localVideoEl.setAttribute("poster", poster);
+        } else {
+          localVideoEl.removeAttribute("poster");
+        }
+
+        const sources = [];
+        if (videoWebm) {
+          sources.push(`<source src="${videoWebm}" type="video/webm">`);
+        }
+        sources.push(`<source src="${videoSrc}" type="video/mp4">`);
+        localVideoEl.innerHTML = sources.join("");
+        localVideoEl.load();
+      } else {
+        if (muxEl) {
+          muxEl.setAttribute("hidden", "true");
+          muxEl.removeAttribute("playback-id");
+          muxEl.removeAttribute("poster");
+        }
+        if (localVideoEl) {
+          localVideoEl.pause();
+          localVideoEl.setAttribute("hidden", "true");
+          localVideoEl.removeAttribute("poster");
+          localVideoEl.removeAttribute("src");
+          localVideoEl.innerHTML = "";
+        }
       }
     };
 
@@ -135,6 +189,14 @@
       overlay.classList.remove("is-open");
       overlay.setAttribute("aria-hidden", "true");
       getMedia(muxEl)?.pause();
+      const localMedia = getMedia(localVideoEl);
+      localMedia?.pause();
+      if (localMedia && localMedia.tagName === "VIDEO") {
+        try {
+          localMedia.currentTime = 0;
+          localMedia.load();
+        } catch {}
+      }
     };
 
     // Overlay events
@@ -203,6 +265,12 @@
 
       const stop = () => {
         element.pause();
+        if (element.tagName === "VIDEO") {
+          try {
+            element.currentTime = 0;
+            element.load();
+          } catch {}
+        }
       };
 
       if (isPhoneView) {
@@ -345,6 +413,10 @@
     aspect-ratio: 16 / 9;
     border: 1px solid #e6e6e6;
     background: #000;
+  }
+
+  .overlay-video[hidden] {
+    display: none !important;
   }
 
   .overlay[data-orientation="portrait"] .overlay-media {

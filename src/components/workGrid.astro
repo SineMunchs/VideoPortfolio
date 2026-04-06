@@ -7,7 +7,7 @@ type WorkItem = {
   id: string;
   href: string;
   poster: string;
-  videoSrc: string;
+  videoSrc?: string;
   videoWebm?: string;
   muxPlaybackId?: string;
   orientation?: "landscape" | "portrait";
@@ -38,7 +38,7 @@ const workItems = items as WorkItem[];
         data-year={item.year}
         data-role={item.role}
         data-tag={item.tag ?? "watch"}
-        data-video={item.videoSrc}
+        data-video={item.videoSrc ?? ""}
         data-video-webm={item.videoWebm ?? ""}
         data-poster={item.poster}
         data-playback-id={item.muxPlaybackId ?? ""}
@@ -68,7 +68,7 @@ const workItems = items as WorkItem[];
                 data-hover-play
               >
                 {item.videoWebm && <source src={item.videoWebm} type="video/webm" />}
-                <source src={item.videoSrc} type="video/mp4" />
+                {item.videoSrc && <source src={item.videoSrc} type="video/mp4" />}
               </video>
             )}
             <span class="watch">{item.tag ?? "watch"}</span>
