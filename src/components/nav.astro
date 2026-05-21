@@ -1,10 +1,14 @@
+---
+const pathname = Astro.url.pathname;
+const showWork = pathname !== "/" && pathname !== "/work";
+---
 <nav class="nav" aria-label="Primary">
   <a class="brand" href="/work">Paddy Gomulski</a>
 
   <details class="menu" id="menu">
     <summary class="menu-summary">menu</summary>
     <div class="nav-menu_dropdown">
-      <a class="menu-item" href="/work">work</a>
+      {showWork && <a class="menu-item" href="/work">work</a>}
       <!-- <a class="menu-item" href="/directors">about</a> -->
       <a class="menu-item" href="/contact">contact</a>
     </div>
