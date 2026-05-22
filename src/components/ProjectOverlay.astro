@@ -288,8 +288,13 @@
         element.pause();
         if (element.tagName === "VIDEO") {
           try {
-            element.currentTime = 0;
-            element.load();
+            // Only reset via load() if the video has actually played.
+            // Calling load() on a fresh (never-played) video wipes the
+            // native poster and leaves a black frame while the reload runs.
+            if (element.currentTime > 0) {
+              element.currentTime = 0;
+              element.load();
+            }
           } catch {}
         }
       };
