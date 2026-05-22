@@ -276,6 +276,10 @@
       if (!isPlayable) return;
 
       let playTimer = null;
+      // Poster overlay img sitting on top of the <video> (sibling element)
+      const posterImg = element.tagName === "VIDEO"
+        ? element.parentElement?.querySelector(".vidPoster")
+        : null;
 
       const play = async () => {
         try {
@@ -283,23 +287,14 @@
           element.muted = true;
           element.playsInline = true;
           await element.play();
+          posterImg?.classList.add("is-playing"); // hide poster once playing
         } catch {}
       };
 
       const stop = () => {
-        if (playTimer) { clearTimeout(playTimer); playTimer = null; } // cancel pending play
+        if (playTimer) { clearTimeout(playTimer); playTimer = null; }
         element.pause();
-        if (element.tagName === "VIDEO") {
-          try {
-            // Only reset via load() if the video has actually played.
-            // Calling load() on a fresh (never-played) video wipes the
-            // native poster and leaves a black frame while the reload runs.
-            if (element.currentTime > 0) {
-              element.currentTime = 0;
-              element.load();
-            }
-          } catch {}
-        }
+        posterImg?.classList.remove("is-playing"); // always restore poster
       };
 
       if (isPhoneView) {
