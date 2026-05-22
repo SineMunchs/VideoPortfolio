@@ -125,6 +125,7 @@ mux-player.no-controls [part~="top-play-button"] {
     grid-template-rows: auto auto;
     align-content: start;
     margin-bottom: 100px;
+    touch-action: manipulation; /* removes 300 ms tap delay on mobile */
   }
 
   .cardBody {

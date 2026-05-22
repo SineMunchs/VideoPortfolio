@@ -36,9 +36,11 @@
           <div class="overlay-project" data-overlay-project></div>
           <div class="overlay-sub" data-overlay-sub></div>
         </div>
+        <!-- overlay text hidden
         <div class="overlay-copy">
           <p data-overlay-description></p>
         </div>
+        -->
       </div>
     </div>
   </div>
@@ -51,7 +53,6 @@
     const closeBtn = overlay?.querySelector("[data-overlay-close]");
     const projectEl = overlay?.querySelector("[data-overlay-project]");
     const subEl = overlay?.querySelector("[data-overlay-sub]");
-    const descriptionEl = overlay?.querySelector("[data-overlay-description]");
     const linkEl = overlay?.querySelector("[data-overlay-link]");
     const muxEl = overlay?.querySelector("[data-overlay-mux]");
     const localVideoEl = overlay?.querySelector("[data-overlay-video]");
@@ -105,14 +106,12 @@
       const playbackId = item.dataset.playbackId || "";
       const videoSrc = item.dataset.video || "";
       const videoWebm = item.dataset.videoWebm || "";
-      const overlayText = item.dataset.overlayText || "";
       const orientation = item.dataset.orientation || "landscape";
 
       overlay.dataset.orientation = orientation;
 
       if (projectEl) projectEl.textContent = project || title;
       if (subEl) subEl.textContent = [role, title, year].filter(Boolean).join(" • ");
-      if (descriptionEl) descriptionEl.innerHTML = overlayText;
       if (linkEl) linkEl.href = href;
 
       if (playbackId && muxEl) {
@@ -217,13 +216,35 @@
 
     // Grid item interactions
     document.querySelectorAll(".workItem").forEach((item) => {
-      const handleOpen = (event) => {
-        if (event.type === "mousedown" && event.button !== 0) return;
+      let touchStartY = 0;
+      let isTouchTap = false;
+
+      // Touch: open on tap, ignore scrolls
+      item.addEventListener("touchstart", (e) => {
+        touchStartY = e.touches[0].clientY;
+        isTouchTap = true;
+      }, { passive: true });
+
+      item.addEventListener("touchmove", () => {
+        isTouchTap = false;
+      }, { passive: true });
+
+      item.addEventListener("touchend", (e) => {
+        if (!isTouchTap) return;
+        const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+        if (dy < 10) {
+          e.preventDefault(); // prevent mousedown/click from double-firing
+          openOverlay(item);
+        }
+      });
+
+      // Mouse: existing desktop behaviour
+      item.addEventListener("mousedown", (event) => {
+        if (event.button !== 0) return;
         event.preventDefault();
         openOverlay(item);
-      };
+      });
 
-      item.addEventListener("mousedown", handleOpen);
       item.addEventListener("click", (event) => event.preventDefault());
       item.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -341,9 +362,7 @@
 
   /* Overlay Content */
   .overlay-close {
-    position: left;
-    top: 8px;
-    right: 20px;
+    position: relative;
     border: 0;
     background: none;
     color: inherit;
@@ -353,6 +372,10 @@
     letter-spacing: 0.01em;
     text-transform: lowercase;
     transition: border-color 160ms ease;
+    /* larger tap target on touch */
+    padding: 8px 4px;
+    margin: -8px -4px;
+    touch-action: manipulation;
   }
 
   .overlay-close:hover,
