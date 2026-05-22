@@ -517,12 +517,25 @@
       top: 4px;
     }
 
+    .overlay-panel {
+      width: 100%;
+      padding-bottom: calc(40px + env(safe-area-inset-bottom));
+    }
+
+    /* Centre the video block vertically inside the panel */
     .overlay-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       margin-top: 8px;
-      height: calc(100% - 16px);
+      height: calc(100% - 36px);
+      overflow: hidden;
     }
 
     .overlay-media {
+      /* Drop the 1fr ghost row so the grid shrinks to content height */
+      grid-template-rows: auto auto auto;
+      height: auto;
       gap: 8px;
     }
 
@@ -533,11 +546,6 @@
 
     .overlay-sticky-video {
       position: static;
-    }
-
-    .overlay-panel {
-      width: 100%;
-      padding-bottom: calc(40px + env(safe-area-inset-bottom));
     }
   }
 </style>
