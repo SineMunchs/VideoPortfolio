@@ -47,7 +47,7 @@ const workItems = items as WorkItem[];
         data-overlay-text={item.overlay ?? ""}
       >
         <div class="cardBody">
-          <a class="media" href={item.href} aria-label={`Open ${item.project}`}>
+          <a class="media" href={item.href} aria-label={`Open ${item.project}`} style={`background-image: url('${item.poster}')`}>
             {hasMux ? (
               <MuxPlayerFrame
                 playbackId={item.muxPlaybackId}
@@ -138,7 +138,7 @@ mux-player.no-controls [part~="top-play-button"] {
     display: block;
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    background: #000;
+    background: #000 center / cover no-repeat;
     text-decoration: none;
   }
 

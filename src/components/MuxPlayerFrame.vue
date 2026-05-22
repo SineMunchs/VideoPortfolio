@@ -46,19 +46,21 @@ const pauseOtherMobileMedia = (activeElement: Element) => {
 const play = async () => {
   if (!muxRef.value) return;
   if (isPhoneView()) pauseOtherMobileMedia(muxRef.value as Element);
-  showPoster.value = false;
   muxRef.value.muted = true;
   muxRef.value.playsInline = true;
   try {
     await muxRef.value.play();
-  } catch {}
+    showPoster.value = false; // hide poster only once play actually starts
+  } catch {
+    // autoplay blocked or network error — keep poster visible
+  }
 };
 
 
 const stop = () => {
+  showPoster.value = Boolean(props.poster); // restore poster first, always
   if (!muxRef.value) return;
-  muxRef.value.pause();
-  showPoster.value = Boolean(props.poster);
+  try { muxRef.value.pause(); } catch {}
 };
 
 onMounted(() => {
