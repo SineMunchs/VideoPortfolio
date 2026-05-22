@@ -31,6 +31,7 @@ const isPhoneView = () =>
 
 let wrap: HTMLElement | null = null;
 let observer: IntersectionObserver | null = null;
+let playTimer: ReturnType<typeof setTimeout> | null = null;
 const pauseOtherMobileMedia = (activeElement: Element) => {
   document.querySelectorAll("video, mux-video, mux-player").forEach((candidate) => {
     if (candidate === activeElement) return;
@@ -58,6 +59,7 @@ const play = async () => {
 
 
 const stop = () => {
+  if (playTimer) { clearTimeout(playTimer); playTimer = null; } // cancel pending play
   showPoster.value = Boolean(props.poster); // restore poster first, always
   if (!muxRef.value) return;
   try { muxRef.value.pause(); } catch {}
@@ -73,8 +75,14 @@ onMounted(() => {
     observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) play();
-          else stop();
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+            // Show thumbnail for 1.5 s before the video starts
+            if (!playTimer) {
+              playTimer = setTimeout(() => { playTimer = null; play(); }, 1500);
+            }
+          } else {
+            stop(); // cancels the timer and pauses
+          }
         });
       },
       { threshold: [0, 0.6, 1] }
@@ -95,6 +103,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  if (playTimer) { clearTimeout(playTimer); playTimer = null; }
   if (observer) {
     observer.disconnect();
     observer = null;
