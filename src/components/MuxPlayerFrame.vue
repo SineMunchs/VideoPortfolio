@@ -25,42 +25,23 @@ defineExpose({
   set muted(val) { if (muxRef.value) muxRef.value.muted = val; },
 });
 
-// Hover on desktop, visibility-based autoplay on phones/tablets.
-const isPhoneView = () =>
-  window.matchMedia("(hover: none), (pointer: coarse), (max-width: 900px)").matches;
-
+// Desktop only: hover/focus to preview. Mobile shows thumbnails; tap opens the overlay.
 let wrap: HTMLElement | null = null;
-let observer: IntersectionObserver | null = null;
-let playTimer: ReturnType<typeof setTimeout> | null = null;
-const pauseOtherMobileMedia = (activeElement: Element) => {
-  document.querySelectorAll("video, mux-video, mux-player").forEach((candidate) => {
-    if (candidate === activeElement) return;
-    const media = candidate as HTMLMediaElement & { pause?: () => void };
-    if (typeof media.pause === "function") {
-      try {
-        media.pause();
-      } catch {}
-    }
-  });
-};
 
 const play = async () => {
   if (!muxRef.value) return;
-  if (isPhoneView()) pauseOtherMobileMedia(muxRef.value as Element);
   muxRef.value.muted = true;
   muxRef.value.playsInline = true;
   try {
     await muxRef.value.play();
-    showPoster.value = false; // hide poster only once play actually starts
+    showPoster.value = false;
   } catch {
-    // autoplay blocked or network error — keep poster visible
+    // autoplay blocked — keep poster visible
   }
 };
 
-
 const stop = () => {
-  if (playTimer) { clearTimeout(playTimer); playTimer = null; } // cancel pending play
-  showPoster.value = Boolean(props.poster); // restore poster first, always
+  showPoster.value = Boolean(props.poster);
   if (!muxRef.value) return;
   try { muxRef.value.pause(); } catch {}
 };
@@ -71,27 +52,7 @@ onMounted(() => {
   muxRef.value.pause();
   showPoster.value = Boolean(props.poster);
 
-  if (isPhoneView()) {
-    observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-            // Show thumbnail for 1.5 s before the video starts
-            if (!playTimer) {
-              playTimer = setTimeout(() => { playTimer = null; play(); }, 1500);
-            }
-          } else {
-            stop(); // cancels the timer and pauses
-          }
-        });
-      },
-      { threshold: [0, 0.6, 1] }
-    );
-    observer.observe(muxRef.value);
-    return;
-  }
-
-  // Find closest anchor for accessibility
+  // Hover preview — desktop only (touch devices have no hover)
   wrap = muxRef.value.closest('a');
   const targets = [muxRef.value, wrap].filter(Boolean);
   targets.forEach((t) => {
@@ -103,12 +64,6 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  if (playTimer) { clearTimeout(playTimer); playTimer = null; }
-  if (observer) {
-    observer.disconnect();
-    observer = null;
-  }
-
   if (!muxRef.value) return;
   muxRef.value.removeEventListener('ended', stop);
 

@@ -254,19 +254,7 @@
       });
     });
 
-    // Hover preview playback
-    const isPhoneView = window.matchMedia("(hover: none), (pointer: coarse), (max-width: 900px)").matches;
-    const pauseOtherMobileMedia = (activeElement) => {
-      document.querySelectorAll("video, mux-video, mux-player").forEach((candidate) => {
-        if (candidate === activeElement) return;
-        if (typeof candidate.pause === "function") {
-          try {
-            candidate.pause();
-          } catch {}
-        }
-      });
-    };
-
+    // Desktop only: hover/focus to preview. Mobile shows thumbnails; tap opens the overlay.
     document.querySelectorAll("[data-hover-play]").forEach((element) => {
       const isPlayable =
         element.tagName === "VIDEO" ||
@@ -275,7 +263,6 @@
 
       if (!isPlayable) return;
 
-      let playTimer = null;
       // Poster overlay img sitting on top of the <video> (sibling element)
       const posterImg = element.tagName === "VIDEO"
         ? element.parentElement?.querySelector(".vidPoster")
@@ -283,40 +270,19 @@
 
       const play = async () => {
         try {
-          if (isPhoneView) pauseOtherMobileMedia(element);
           element.muted = true;
           element.playsInline = true;
           await element.play();
-          posterImg?.classList.add("is-playing"); // hide poster once playing
+          posterImg?.classList.add("is-playing");
         } catch {}
       };
 
       const stop = () => {
-        if (playTimer) { clearTimeout(playTimer); playTimer = null; }
         element.pause();
-        posterImg?.classList.remove("is-playing"); // always restore poster
+        posterImg?.classList.remove("is-playing");
       };
 
-      if (isPhoneView) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-                // Show thumbnail for 1.5 s before the video starts
-                if (!playTimer) {
-                  playTimer = setTimeout(() => { playTimer = null; play(); }, 1500);
-                }
-              } else {
-                stop(); // cancels the timer and pauses
-              }
-            });
-          },
-          { threshold: [0, 0.6, 1] }
-        );
-        observer.observe(element);
-        return;
-      }
-
+      // Hover preview — desktop only (touch devices have no hover)
       const wrap = element.closest("a");
       const targets = [element, wrap].filter(Boolean);
 
