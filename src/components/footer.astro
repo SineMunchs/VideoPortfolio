@@ -23,7 +23,17 @@ const email = "paddy@paddygomulski.com";
       Instagram
     </a>
   </div>
-  <p>© Paddy Gomulski. All rights reserved.</p>
+  <div class="copyright-block">
+    <a
+      href="https://sinemunch.com/"
+      target="_blank"
+      rel="noopener"
+      class="footer-action credit-link"
+    >
+      Website by S. Munch
+    </a>
+    <p>© Paddy Gomulski. All rights reserved.</p>
+  </div>
 </footer>
 
 <script>
@@ -117,5 +127,14 @@ padding: 0 0 var(--page-pad-block);
 .footer p {
   font-size: 0.6rem;
   margin-right: 0;
+}
+.copyright-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+.credit-link {
+  font-size: 0.6rem;
 }
 </style>
