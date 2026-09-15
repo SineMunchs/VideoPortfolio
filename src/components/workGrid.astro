@@ -1,5 +1,5 @@
 ---
-import items from "../data/work.json";
+import { getWorkItems, urlForImage } from "../lib/sanity";
 import MuxPlayerFrame from "./MuxPlayerFrame.vue";
 import ProjectOverlay from "./ProjectOverlay.astro";
 
@@ -19,7 +19,23 @@ type WorkItem = {
   overlay?: string;
 };
 
-const workItems = items as WorkItem[];
+const sanityItems = await getWorkItems();
+
+const workItems: WorkItem[] = sanityItems.map((item) => ({
+  id: item._id,
+  href: `/work/${item.slug}`,
+  poster: item.poster ? urlForImage(item.poster).width(1600).url() : "",
+  videoSrc: item.videoSrc,
+  videoWebm: item.videoWebm,
+  muxPlaybackId: item.muxPlaybackId,
+  orientation: item.orientation,
+  tag: item.tag,
+  role: item.role ?? "",
+  title: item.title ?? "",
+  year: item.year ?? "",
+  project: item.project,
+  overlay: item.showCredits === false ? undefined : item.credits?.split("\n").join("<br>"),
+}));
 ---
 
 <!-- Work Grid -->
@@ -37,7 +53,7 @@ const workItems = items as WorkItem[];
         data-title={item.title}
         data-year={item.year}
         data-role={item.role}
-        data-tag={item.tag ?? "watch"}
+        data-tag={item.tag ?? ""}
         data-video={item.videoSrc ?? ""}
         data-video-webm={item.videoWebm ?? ""}
         data-poster={item.poster}
@@ -81,7 +97,7 @@ const workItems = items as WorkItem[];
                 )}
               </>
             )}
-            <span class="watch">{item.tag ?? "watch"}</span>
+            <span class="">{item.tag ?? ""}</span>
           </a>
           <div class="metaGrid" aria-label="Project metadata">
             <div class="meta metaInline">
